@@ -1,2 +1,7 @@
 # CVinRobocon2018
-computer vision module of Robocon 2018
+#### 2017.11.6
+
+1. 识别距离不确定的解决方案
+   * 双摄像头
+   * resize()
+
