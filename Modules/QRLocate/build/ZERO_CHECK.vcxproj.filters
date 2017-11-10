@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Code\CVinRobocon2018\Modules\QRCodeRecognization\build\CMakeFiles\1ba8a288f1cb851a6e7a173a1983f69f\generate.stamp.rule">
+    <CustomBuild Include="C:\Code\CVinRobocon2018\Modules\QRLocate\build\CMakeFiles\79190ba3eacfaf9b70ddf02e842749b8\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{A58FDF13-EFF7-3B76-87B7-6352FDC33AF0}</UniqueIdentifier>
+      <UniqueIdentifier>{CCB63068-3DCF-353E-B93F-B9FFB2C79683}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

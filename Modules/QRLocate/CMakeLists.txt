@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(PROJ_NAME QRCodeRecog)
+set(PROJ_NAME QRLocate)
 project(${PROJ_NAME})
 
 FILE(GLOB HEADER_LIST "src/*.h")
