@@ -15,25 +15,27 @@ Mat GetRegularROI(Mat &img, RotatedRect &rect)
 		return Mat::zeros(1, 1, CV_32FC1);
 	}
 
-	Mat ROIImage = img(Rect(ROIX, ROIY, diagonal, diagonal));
-	Mat rotateImage = Mat::zeros(diagonal, diagonal, CV_32FC1);
+	Mat ROIImage = img(Rect(static_cast<int>(ROIX), static_cast<int>(ROIY), 
+							static_cast<int>(diagonal), static_cast<int>(diagonal)));
+	Mat rotateImage = Mat::zeros(static_cast<int>(diagonal), static_cast<int>(diagonal), CV_32FC1);
 	Point2f ROICenter(diagonal / 2.0f, diagonal / 2.0f);
 	Mat regularImage = Mat::zeros(REGULAR_SIDE, REGULAR_SIDE, CV_32FC1);
 
 	//∑¬…‰±‰ªª
 	Mat rotateMatrix = getRotationMatrix2D(ROICenter, rect.angle, 1);
-	warpAffine(ROIImage, rotateImage, rotateMatrix, Size(diagonal, diagonal));
+	warpAffine(ROIImage, rotateImage, rotateMatrix, Size(static_cast<int>(diagonal), static_cast<int>(diagonal)));
 
 	//≤√«–µÙ∂‡”‡ÕºœÒ
-	rotateImage = rotateImage(Rect(2 + (diagonal - rect.size.width) / 2, 2 + (diagonal - rect.size.height) / 2,
-		rect.size.width, rect.size.height));
+	rotateImage = rotateImage(Rect(static_cast<int>(2.0f + (diagonal - rect.size.width) / 2.0f), 
+									static_cast<int>(2.0f + (diagonal - rect.size.height) / 2.0f),
+									static_cast<int>(rect.size.width), static_cast<int>(rect.size.height)));
 
 	//≥ﬂ¥Á’˝‘ÚªØ
 	resize(rotateImage, regularImage, Size(REGULAR_SIDE, REGULAR_SIDE));
 	threshold(regularImage, regularImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
-	//imshow("ROIImage", regularImage);
-	//waitKey(0);
+	imshow("ROIImage", regularImage);
+	waitKey(0);
 
 	return regularImage;
 }
@@ -42,13 +44,12 @@ bool JudgeCornerByX(Mat &img)
 {
 	int totalPixCnt[5] = { 0 };
 	int validPixCnt[5] = { 0 };
-	vector<float> ratioCalc;
-	vector<float> stdRatio = { 1.0f, 1.0f, 3.0f, 1.0f, 1.0f };
+	vector<double> ratioCalc;
+	vector<double> stdRatio = { 1.0f, 1.0f, 3.0f, 1.0f, 1.0f };
 	ratioCalc.clear();
 
 	if (img.rows != REGULAR_SIDE || img.cols != REGULAR_SIDE)
 	{
-		cout << "Input image not regular." << endl;
 		return false;
 	}
 
@@ -83,7 +84,7 @@ bool JudgeCornerByX(Mat &img)
 
 	for (int i = 0; i < 5; i++)
 	{
-		float ratio = static_cast<double>(validPixCnt[i]) / static_cast<double>(validPixCnt[2] / 3.0f);
+		double ratio = static_cast<double>(validPixCnt[i]) / static_cast<double>(validPixCnt[2] / 3.0f);
 		ratioCalc.push_back(ratio);
 	}
 
@@ -103,13 +104,12 @@ bool JudgeCornerByY(Mat &img)
 {
 	int totalPixCnt[5] = { 0 };
 	int validPixCnt[5] = { 0 };
-	vector<float> ratioCalc;
-	vector<float> stdRatio = { 1.0f, 1.0f, 3.0f, 1.0f, 1.0f };
+	vector<double> ratioCalc;
+	vector<double> stdRatio = { 1.0f, 1.0f, 3.0f, 1.0f, 1.0f };
 	ratioCalc.clear();
 
 	if (img.rows != REGULAR_SIDE || img.cols != REGULAR_SIDE)
 	{
-		cout << "Input image not regular." << endl;
 		return false;
 	}
 
@@ -144,7 +144,7 @@ bool JudgeCornerByY(Mat &img)
 
 	for (int i = 0; i < 5; i++)
 	{
-		float ratio = static_cast<double>(validPixCnt[i]) / static_cast<double>(validPixCnt[2] / 3.0f);
+		double ratio = static_cast<double>(validPixCnt[i]) / static_cast<double>(validPixCnt[2] / 3.0f);
 		ratioCalc.push_back(ratio);
 	}
 
