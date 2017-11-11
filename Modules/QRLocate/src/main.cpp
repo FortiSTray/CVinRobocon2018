@@ -52,14 +52,16 @@ int main(int argc, char* argv[])
 				Mat regularROI = GetRegularROI(src, rect);
 				if (JudgeCornerByX(regularROI) && JudgeCornerByY(regularROI)) 
 				{
-					drawContours(locateResult, contours, static_cast<int>(t), Scalar(0, 0, 255), 1, 8);
+					drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
 					//imwrite(format("D:/gloomyfish/outimage/contour_%d.jpg", static_cast<int>(t)), regularROI);
 
-					imshow("roiImage", regularROI);
-					waitKey(0);
+					//imshow("roiImage", regularROI);
+					//waitKey(0);
 				}
 			}
 		}
+		resize(locateResult, locateResult, Size(700, 700));
+		//resize(locateResult, locateResult, Size(525, 700));
 		imshow("result", locateResult);
 
 	//	if (waitKey(5) == 27) break;
@@ -67,28 +69,4 @@ int main(int argc, char* argv[])
 	//}
     waitKey(0);
     return 0;
-}
-
-bool isXCorner(Mat &image)
-{
-	float matchedNum[2] = { 0 };
-	for (auto i = 0; i < image.cols; i++)
-	{
-		auto pix = image.ptr<Vec3b>(image.rows / 2)[i];
-
-		if (pix[0] <= 127 && pix[1] <= 127 && pix[2] <= 127)
-		{
-			matchedNum[0] += 1.0f;
-			*image.ptr<Vec3b>(image.rows / 2, i) = Vec3b(0, 0, 255);
-		}
-		else
-		{
-			matchedNum[1] += 1.0f;
-		}
-	}
-	//imshow("xcorner", image);
-	if (fabs(matchedNum[0] / matchedNum[1] - 5.0f / 2.0f) <= 0.9f)
-		return true;
-	else 
-		return false;
 }

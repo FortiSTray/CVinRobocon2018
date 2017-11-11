@@ -32,8 +32,8 @@ Mat GetRegularROI(Mat &img, RotatedRect &rect)
 	resize(rotateImage, regularImage, Size(REGULAR_SIDE, REGULAR_SIDE));
 	threshold(regularImage, regularImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
-	//imshow("ROIImage", regularImage);
-	//waitKey(0);
+	imshow("ROIImage", regularImage);
+	waitKey(0);
 
 	return regularImage;
 }
