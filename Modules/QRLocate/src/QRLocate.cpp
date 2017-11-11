@@ -1,6 +1,6 @@
 #include "QRLocate.h"
 
-#define REGULAR_SIDE 49
+#define REGULAR_SIDE 70
 
 //获取ROI -> 旋转 -> 裁切 -> 尺寸调整 -> 正则化的图像
 Mat GetRegularROI(Mat &img, RotatedRect &rect)
@@ -32,16 +32,18 @@ Mat GetRegularROI(Mat &img, RotatedRect &rect)
 	resize(rotateImage, regularImage, Size(REGULAR_SIDE, REGULAR_SIDE));
 	threshold(regularImage, regularImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
-	imshow("ROIImage", regularImage);
-	waitKey(0);
+	//imshow("ROIImage", regularImage);
+	//waitKey(0);
 
 	return regularImage;
 }
 
 bool JudgeCornerByX(Mat &img)
 {
-	int pixCounter[5] = { 0 };
-	vector<int> ratioCalc;
+	int totalPixCnt[5] = { 0 };
+	int validPixCnt[5] = { 0 };
+	vector<float> ratioCalc;
+	vector<float> stdRatio = { 1.0f, 1.0f, 3.0f, 1.0f, 1.0f };
 	ratioCalc.clear();
 
 	if (img.rows != REGULAR_SIDE || img.cols != REGULAR_SIDE)
@@ -50,36 +52,59 @@ bool JudgeCornerByX(Mat &img)
 		return false;
 	}
 
+	//计算总像素数和有效像素数
+#define _pix_cnt_(value, n) do \
+							{ \
+								totalPixCnt[n]++; \
+								if (img.ptr<uchar>(i)[j] == value) { validPixCnt[n]++; } \
+							} while (0) \
+
 	for (int i = REGULAR_SIDE / 7 * 2; i < REGULAR_SIDE / 7 * 5; i++)
 	{
-		for (int j = REGULAR_SIDE / 7 * 0; j < REGULAR_SIDE / 7 * 1; j++) { if (img.ptr<uchar>(i)[j] == 0) { pixCounter[0]++; } }
-		if (pixCounter[0] == 0) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 1; j < REGULAR_SIDE / 7 * 2; j++) { if (img.ptr<uchar>(i)[j] == 255) { pixCounter[1]++; } }
-		if (pixCounter[0] == 1) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 2; j < REGULAR_SIDE / 7 * 5; j++) { if (img.ptr<uchar>(i)[j] == 0) { pixCounter[2]++; } }
-		if (pixCounter[0] == 2) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 5; j < REGULAR_SIDE / 7 * 6; j++) { if (img.ptr<uchar>(i)[j] == 255) { pixCounter[3]++; } }
-		if (pixCounter[0] == 3) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 6; j < REGULAR_SIDE / 7 * 7; j++) { if (img.ptr<uchar>(i)[j] == 0) { pixCounter[4]++; } }
-		if (pixCounter[0] == 4) { return false; }
+		for (int j = REGULAR_SIDE / 7 * 0; j < REGULAR_SIDE / 7 * 1; j++) { _pix_cnt_(0  , 0); }
+		for (int j = REGULAR_SIDE / 7 * 1; j < REGULAR_SIDE / 7 * 2; j++) { _pix_cnt_(255, 1); }
+		for (int j = REGULAR_SIDE / 7 * 2; j < REGULAR_SIDE / 7 * 5; j++) { _pix_cnt_(0  , 2); }
+		for (int j = REGULAR_SIDE / 7 * 5; j < REGULAR_SIDE / 7 * 6; j++) { _pix_cnt_(255, 3); }
+		for (int j = REGULAR_SIDE / 7 * 6; j < REGULAR_SIDE / 7 * 7; j++) { _pix_cnt_(0  , 4); }
+	}
+	if (validPixCnt[2] == 0) { return false; }
+
+#undef _pix_cnt_
+
+	//计算有效像素 / 总像素, 比值过低则返回false
+	for (int i = 0; i < 5; i++)
+	{
+		float validRatio = static_cast<float>(validPixCnt[i]) / static_cast<float>(totalPixCnt[i]);
+		if (validRatio <= 0.6f)
+		{
+			return false;
+		}
 	}
 
 	for (int i = 0; i < 5; i++)
 	{
-		int x = static_cast<int>(static_cast<double>(pixCounter[i]) / static_cast<double>(pixCounter[0]) + 0.5);
-		ratioCalc.push_back(x);
+		float ratio = static_cast<double>(validPixCnt[i]) / static_cast<double>(validPixCnt[2] / 3.0f);
+		ratioCalc.push_back(ratio);
 	}
 
-	if (ratioCalc[0] == 1 && ratioCalc[1] == 1 && ratioCalc[2] == 3 && ratioCalc[3] == 1 && ratioCalc[4] == 1)
+#define ERROR_RANGE 0.6f
+
+	if (fabs(ratioCalc[0] - stdRatio[0]) <= ERROR_RANGE && fabs(ratioCalc[1] - stdRatio[1]) <= ERROR_RANGE &&
+		fabs(ratioCalc[2] - stdRatio[2]) <= ERROR_RANGE && fabs(ratioCalc[3] - stdRatio[3]) <= ERROR_RANGE &&
+		fabs(ratioCalc[4] - stdRatio[4]) <= ERROR_RANGE)
 	{
 		return true;
 	}
 	else { return false; }
+
+#undef ERROR_RANGE
 }
 bool JudgeCornerByY(Mat &img)
 {
-	int pixCounter[5] = { 0 };
-	vector<int> ratioCalc;
+	int totalPixCnt[5] = { 0 };
+	int validPixCnt[5] = { 0 };
+	vector<float> ratioCalc;
+	vector<float> stdRatio = { 1.0f, 1.0f, 3.0f, 1.0f, 1.0f };
 	ratioCalc.clear();
 
 	if (img.rows != REGULAR_SIDE || img.cols != REGULAR_SIDE)
@@ -88,29 +113,50 @@ bool JudgeCornerByY(Mat &img)
 		return false;
 	}
 
+	//计算总像素数和有效像素数
+#define _pix_cnt_(value, n) do \
+							{ \
+								totalPixCnt[n]++; \
+								if (img.ptr<uchar>(j)[i] == value) { validPixCnt[n]++; } \
+							} while (0) \
+
 	for (int i = REGULAR_SIDE / 7 * 2; i < REGULAR_SIDE / 7 * 5; i++)
 	{
-		for (int j = REGULAR_SIDE / 7 * 0; j < REGULAR_SIDE / 7 * 1; j++) { if (img.ptr<uchar>(j)[i] == 0) { pixCounter[0]++; } }
-		if (pixCounter[0] == 0) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 1; j < REGULAR_SIDE / 7 * 2; j++) { if (img.ptr<uchar>(j)[i] == 255) { pixCounter[1]++; } }
-		if (pixCounter[0] == 1) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 2; j < REGULAR_SIDE / 7 * 5; j++) { if (img.ptr<uchar>(j)[i] == 0) { pixCounter[2]++; } }
-		if (pixCounter[0] == 2) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 5; j < REGULAR_SIDE / 7 * 6; j++) { if (img.ptr<uchar>(j)[i] == 255) { pixCounter[3]++; } }
-		if (pixCounter[0] == 3) { return false; }
-		for (int j = REGULAR_SIDE / 7 * 6; j < REGULAR_SIDE / 7 * 7; j++) { if (img.ptr<uchar>(j)[i] == 0) { pixCounter[4]++; } }
-		if (pixCounter[0] == 4) { return false; }
+		for (int j = REGULAR_SIDE / 7 * 0; j < REGULAR_SIDE / 7 * 1; j++) { _pix_cnt_(0, 0); }
+		for (int j = REGULAR_SIDE / 7 * 1; j < REGULAR_SIDE / 7 * 2; j++) { _pix_cnt_(255, 1); }
+		for (int j = REGULAR_SIDE / 7 * 2; j < REGULAR_SIDE / 7 * 5; j++) { _pix_cnt_(0, 2); }
+		for (int j = REGULAR_SIDE / 7 * 5; j < REGULAR_SIDE / 7 * 6; j++) { _pix_cnt_(255, 3); }
+		for (int j = REGULAR_SIDE / 7 * 6; j < REGULAR_SIDE / 7 * 7; j++) { _pix_cnt_(0, 4); }
+	}
+	if (validPixCnt[2] == 0) { return false; }
+
+#undef _pix_cnt_
+
+	//计算有效像素 / 总像素, 比值过低则返回false
+	for (int i = 0; i < 5; i++)
+	{
+		float validRatio = static_cast<float>(validPixCnt[i]) / static_cast<float>(totalPixCnt[i]);
+		if (validRatio <= 0.6f)
+		{
+			return false;
+		}
 	}
 
 	for (int i = 0; i < 5; i++)
 	{
-		int x = static_cast<int>(static_cast<double>(pixCounter[i]) / static_cast<double>(pixCounter[0]) + 0.5);
-		ratioCalc.push_back(x);
+		float ratio = static_cast<double>(validPixCnt[i]) / static_cast<double>(validPixCnt[2] / 3.0f);
+		ratioCalc.push_back(ratio);
 	}
 
-	if (ratioCalc[0] == 1 && ratioCalc[1] == 1 && ratioCalc[2] == 3 && ratioCalc[3] == 1 && ratioCalc[4] == 1)
+#define ERROR_RANGE 0.6f
+
+	if (fabs(ratioCalc[0] - stdRatio[0]) <= ERROR_RANGE && fabs(ratioCalc[1] - stdRatio[1]) <= ERROR_RANGE &&
+		fabs(ratioCalc[2] - stdRatio[2]) <= ERROR_RANGE && fabs(ratioCalc[3] - stdRatio[3]) <= ERROR_RANGE &&
+		fabs(ratioCalc[4] - stdRatio[4]) <= ERROR_RANGE)
 	{
 		return true;
 	}
 	else { return false; }
+
+#undef ERROR_RANGE
 }

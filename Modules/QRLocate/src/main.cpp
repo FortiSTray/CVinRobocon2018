@@ -22,12 +22,16 @@ int main(int argc, char* argv[])
 			return -1;
 		}
 		Mat locateResult = src.clone();
+		Mat out;
 
 		namedWindow("input image", CV_WINDOW_AUTOSIZE);
 		imshow("input image", src);
 
 		cvtColor(src, src, COLOR_BGR2GRAY);
+		//medianBlur(src, src, 5);
+		//imwrite("afterBlur.jpg", out);
 		threshold(src, src, 0, 255, THRESH_BINARY | THRESH_OTSU);
+		imshow("threshold", src);
 
 		//detect rectangle now
 		vector<vector<Point>> contours;
@@ -50,17 +54,18 @@ int main(int argc, char* argv[])
 			{
 				printf("angle : %.2f\n", rect.angle);
 				Mat regularROI = GetRegularROI(src, rect);
+
 				if (JudgeCornerByX(regularROI) && JudgeCornerByY(regularROI)) 
 				{
 					drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
 					//imwrite(format("D:/gloomyfish/outimage/contour_%d.jpg", static_cast<int>(t)), regularROI);
 
-					//imshow("roiImage", regularROI);
-					//waitKey(0);
+					imshow("roiImage", regularROI);
+					waitKey(0);
 				}
 			}
 		}
-		resize(locateResult, locateResult, Size(700, 700));
+		//resize(locateResult, locateResult, Size(700, 700));
 		//resize(locateResult, locateResult, Size(525, 700));
 		imshow("result", locateResult);
 
