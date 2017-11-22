@@ -34,8 +34,8 @@ Mat GetRegularROI(Mat &img, RotatedRect &rect)
 	resize(rotateImage, regularImage, Size(REGULAR_SIDE, REGULAR_SIDE));
 	threshold(regularImage, regularImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
-	imshow("ROIImage", regularImage);
-	waitKey(0);
+	//imshow("ROIImage", regularImage);
+	//waitKey(0);
 
 	return regularImage;
 }
@@ -100,6 +100,7 @@ bool JudgeCornerByX(Mat &img)
 
 #undef ERROR_RANGE
 }
+
 bool JudgeCornerByY(Mat &img)
 {
 	int totalPixCnt[5] = { 0 };
@@ -137,7 +138,7 @@ bool JudgeCornerByY(Mat &img)
 	{
 		float validRatio = static_cast<float>(validPixCnt[i]) / static_cast<float>(totalPixCnt[i]);
 		if (validRatio <= 0.6f)
-		{
+		{ 
 			return false;
 		}
 	}

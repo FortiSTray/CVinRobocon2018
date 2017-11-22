@@ -14,6 +14,7 @@ int main(int argc, char* argv[])
 	//while (true)
 	//{
 		Mat src = imread("QRCode.jpg");
+		//resize(src, src, Size(src.cols / 2.5, src.rows / 2.5));
 		//videoCapture >> src;
 
 		if (src.empty())
@@ -28,10 +29,10 @@ int main(int argc, char* argv[])
 		imshow("input image", src);
 
 		cvtColor(src, src, COLOR_BGR2GRAY);
-		//medianBlur(src, src, 5);
-		//imwrite("afterBlur.jpg", out);
-		threshold(src, src, 0, 255, THRESH_BINARY | THRESH_OTSU);
-		imshow("threshold", src);
+		medianBlur(src, src, 3);
+		//threshold(src, src, 0, 255, THRESH_BINARY | THRESH_OTSU);
+		adaptiveThreshold(src, src, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
+		imshow("threshold.jpg", src);
 
 		//detect rectangle now
 		vector<vector<Point>> contours;
@@ -60,8 +61,8 @@ int main(int argc, char* argv[])
 					drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
 					//imwrite(format("D:/gloomyfish/outimage/contour_%d.jpg", static_cast<int>(t)), regularROI);
 
-					imshow("roiImage", regularROI);
-					waitKey(0);
+					//imshow("roiImage", regularROI);
+					//waitKey(0);
 				}
 			}
 		}
