@@ -121,7 +121,6 @@
       <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/Debug/RoboconCV.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/Debug/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <Version></Version>
     </Link>
     <ProjectReference>
@@ -167,7 +166,6 @@
       <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/Release/RoboconCV.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/Release/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <Version></Version>
     </Link>
     <ProjectReference>
@@ -213,7 +211,6 @@
       <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/MinSizeRel/RoboconCV.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/MinSizeRel/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <Version></Version>
     </Link>
     <ProjectReference>
@@ -259,7 +256,6 @@
       <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/RelWithDebInfo/RoboconCV.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/RelWithDebInfo/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <Version></Version>
     </Link>
     <ProjectReference>

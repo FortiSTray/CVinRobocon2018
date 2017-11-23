@@ -31,7 +31,7 @@ target_link_libraries(${PROJ_NAME} ${CMAKE_SOURCE_DIR}/MindVisionAPI/Library/MVC
 set_target_properties(${PROJ_NAME} PROPERTIES COMPILE_FLAGS "/MP")
 
 # Administrator
-set_target_properties(${PROJ_NAME} PROPERTIES LINK_FLAGS "/level='requireAdministrator'") 
+#set_target_properties(${PROJ_NAME} PROPERTIES LINK_FLAGS "/level='requireAdministrator'") 
 
 # Unicode Encoder
 Add_Definitions(-DUNICODE -D_UNICODE)
