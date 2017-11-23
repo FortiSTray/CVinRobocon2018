@@ -24,6 +24,8 @@ tSdkFrameStatistic  m_sFrameLast;
 int					m_iTimeLast;
 char		    g_CameraName[64];
 
+int start = 0;
+
 /*图像抓取线程，主动调用SDK接口函数获取图像*/
 UINT WINAPI uiDisplayThread(LPVOID lpParam)
 {
@@ -57,9 +59,9 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				//-------------------------------3/4ms
 				cv::Mat original_image(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
 				cv::Mat trueImage = trueImage.zeros(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3);
-				for (size_t i = 0; i < original_image.rows; i++)
+				for (int  i = 0; i < original_image.rows; i++)
 				{
-					for (size_t j = 0; j < original_image.cols; j++)
+					for (int j = 0; j < original_image.cols; j++)
 					{
 						*trueImage.ptr<Vec3b>(i, j) = original_image.ptr<Vec3b>(original_image.rows - i - 1)[j];
 					}
@@ -67,11 +69,14 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				//////cv::Mat wrong_image(Size(sFrameInfo.iHeight, sFrameInfo.iWidth), CV_8UC3, m_pFrameBuffer);
 				//cv::imshow("original_image_all", original_image_all);
 				//cv::resize(original_image_all, original_image, cv::Size(original_image_all.cols / 2, original_image_all.rows / 2), (0, 0), (0, 0), 3);			
-				cv::resize(trueImage, trueImage, cv::Size(trueImage.cols / 8 * 3, trueImage.rows / 8 * 3), (0, 0), (0, 0), 3);
+				//cv::resize(trueImage, trueImage, cv::Size(trueImage.cols / 8 * 3, trueImage.rows / 8 * 3), (0, 0), (0, 0), 3);
 				//////cv::resize(wrong_image, wrong_image, cv::Size(original_image.cols / 8 * 3, original_image.rows / 8 * 3), (0, 0), (0, 0), 3);
 				cv::imshow("original", trueImage);
 				//////cv::imshow("wrong", wrong_image);
 
+				int time = clock() - start;
+				cout << time << endl;
+				start = clock();
 
 				m_iDispFrameNum++;
 			}
