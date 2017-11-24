@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
 
 		//detect rectangle now
 		vector<vector<Point>> contours;
+		vector<Point> locateContour;
 		vector<Vec4i> hireachy;
 		Moments monents;
 		findContours(src.clone(), contours, hireachy, RETR_LIST, CHAIN_APPROX_SIMPLE, Point());
@@ -59,6 +60,7 @@ int main(int argc, char* argv[])
 				if (JudgeCornerByX(regularROI) && JudgeCornerByY(regularROI)) 
 				{
 					drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
+					locateContour.insert(locateContour.end(), contours[t].begin(), contours[t].end());
 					//imwrite(format("D:/gloomyfish/outimage/contour_%d.jpg", static_cast<int>(t)), regularROI);
 
 					//imshow("roiImage", regularROI);
@@ -68,7 +70,10 @@ int main(int argc, char* argv[])
 		}
 		//resize(locateResult, locateResult, Size(700, 700));
 		//resize(locateResult, locateResult, Size(525, 700));
+		RotatedRect rectReal = minAreaRect(locateContour);
+		Mat regularROI = GetRegularROI(src, rectReal);
 		imshow("result", locateResult);
+		imshow("ROI", regularROI);
 
 	//	if (waitKey(5) == 27) break;
 
