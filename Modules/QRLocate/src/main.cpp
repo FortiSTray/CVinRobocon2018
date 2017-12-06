@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 		vector<Point> locateContour;
 		vector<Vec4i> hireachy;
 		Moments monents;
-		findContours(src.clone(), contours, hireachy, RETR_LIST, CHAIN_APPROX_SIMPLE, Point());
+		findContours(src.clone(), contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
 
 		for (size_t t = 0; t < contours.size(); t++)
 		{
@@ -54,26 +54,35 @@ int main(int argc, char* argv[])
 
 			if (ratio > 0.85 && w < src.cols / 4 && h < src.rows / 4)
 			{
-				printf("angle : %.2f\n", rect.angle);
-				Mat regularROI = GetRegularROI(src, rect);
+				//drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
+				//imshow("result", locateResult);
+				//waitKey(0);
 
-				if (JudgeCornerByX(regularROI) && JudgeCornerByY(regularROI)) 
+				int k = t;
+				int c = 0;
+
+
+				while (hireachy[k][2] != -1)
 				{
-					drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
-					locateContour.insert(locateContour.end(), contours[t].begin(), contours[t].end());
-					//imwrite(format("D:/gloomyfish/outimage/contour_%d.jpg", static_cast<int>(t)), regularROI);
-
-					//imshow("roiImage", regularROI);
-					//waitKey(0);
+					k = hireachy[k][2];
+					c = c + 1;
+					if (c >= 2)
+					{
+						drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
+						locateContour.insert(locateContour.end(), contours[t].begin(), contours[t].end());
+					}
 				}
 			}
 		}
 		//resize(locateResult, locateResult, Size(700, 700));
 		//resize(locateResult, locateResult, Size(525, 700));
-		RotatedRect rectReal = minAreaRect(locateContour);
-		Mat regularROI = GetRegularROI(src, rectReal);
-		imshow("result", locateResult);
-		imshow("ROI", regularROI);
+		if (!locateContour.empty())
+		{
+			RotatedRect rectReal = minAreaRect(locateContour);
+			Mat regularROI = GetRegularROI(src, rectReal);
+			imshow("result", locateResult);
+			imshow("ROI", regularROI);
+		}
 
 	//	if (waitKey(5) == 27) break;
 

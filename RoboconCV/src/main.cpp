@@ -1,3 +1,8 @@
+/*
+	.__(.)< ~QUAK
+	 \___)
+*/
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
@@ -5,6 +10,8 @@
 #include "Windows.h"
 #include "opencv2\opencv.hpp"
 #include "CameraApi.h"
+#include "locator.h"
+#include "recognizer.h"
 
 using namespace std;
 using namespace cv;
@@ -24,6 +31,9 @@ tSdkFrameStatistic  m_sFrameLast;
 int					m_iTimeLast;
 char		    g_CameraName[64];
 
+Locator CrtLocator;
+
+//临时变量
 int start = 0;
 
 /*图像抓取线程，主动调用SDK接口函数获取图像*/
@@ -41,9 +51,9 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 		{
 			//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
 			//我公司大部分型号的相机，原始数据都是Bayer格式的
-			status = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer,&sFrameInfo);//连续模式
+			status = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);//连续模式
 
-			//分辨率改变了，则刷新背景
+																						 //分辨率改变了，则刷新背景
 			if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
 			{
 				m_sFrInfo.iWidth = sFrameInfo.iWidth;
@@ -56,27 +66,34 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				////调用SDK封装好的显示接口来显示图像,您也可以将m_pFrameBuffer中的RGB数据通过其他方式显示，比如directX,OpengGL,等方式。
 				//CameraImageOverlay(hCamera, m_pFrameBuffer, &sFrameInfo);
 
-				//-------------------------------3/4ms
-				cv::Mat original_image(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
-				cv::Mat trueImage = trueImage.zeros(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3);
-				for (int  i = 0; i < original_image.rows; i++)
-				{
-					for (int j = 0; j < original_image.cols; j++)
-					{
-						*trueImage.ptr<Vec3b>(i, j) = original_image.ptr<Vec3b>(original_image.rows - i - 1)[j];
-					}
-				}
-				//////cv::Mat wrong_image(Size(sFrameInfo.iHeight, sFrameInfo.iWidth), CV_8UC3, m_pFrameBuffer);
-				//cv::imshow("original_image_all", original_image_all);
-				//cv::resize(original_image_all, original_image, cv::Size(original_image_all.cols / 2, original_image_all.rows / 2), (0, 0), (0, 0), 3);			
-				//cv::resize(trueImage, trueImage, cv::Size(trueImage.cols / 8 * 3, trueImage.rows / 8 * 3), (0, 0), (0, 0), 3);
-				//////cv::resize(wrong_image, wrong_image, cv::Size(original_image.cols / 8 * 3, original_image.rows / 8 * 3), (0, 0), (0, 0), 3);
-				cv::imshow("original", trueImage);
-				//////cv::imshow("wrong", wrong_image);
+				/*
+				==========================================================================================================
+				                                               Main Task
+				==========================================================================================================
+				*/
+				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
+				//Mat basicImage = basicImage.zeros(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3);
+				//for (int  i = 0; i < srcImage.rows; i++)
+				//{
+				//	for (int j = 0; j < srcImage.cols; j++)
+				//	{
+				//		*basicImage.ptr<Vec3b>(i, j) = srcImage.ptr<Vec3b>(srcImage.rows - i - 1)[j];
+				//	}
+				//}	
+				//resize(basicImage, basicImage, Size(basicImage.cols / 8 * 3, basicImage.rows / 8 * 3), (0, 0), (0, 0), 3);
+				imshow("original", srcImage);
+
+				//CrtLocator.locate(srcImage);
+				CrtLocator.locateByContours(srcImage);
 
 				int time = clock() - start;
 				cout << time << endl;
 				start = clock();
+				/*
+				==========================================================================================================
+				                                                   End
+				==========================================================================================================
+				*/
 
 				m_iDispFrameNum++;
 			}
@@ -143,7 +160,7 @@ int main(int argc, char* argv[])
 		g_CameraName, NULL, NULL, 0);//"通知SDK内部建该相机的属性页面";
 
 #ifdef USE_CALLBACK_GRAB_IMAGE //如果要使用回调函数方式，定义USE_CALLBACK_GRAB_IMAGE这个宏
-									 //Set the callback for image capture
+	//Set the callback for image capture
 	CameraSetCallbackFunction(m_hCamera, GrabImageCallback, 0, NULL);//"设置图像抓取的回调函数";
 #else
 	m_hDispThread = (HANDLE)_beginthreadex(NULL, 0, &uiDisplayThread, (PVOID)m_hCamera, 0, &m_threadID);
