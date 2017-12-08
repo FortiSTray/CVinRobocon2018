@@ -12,14 +12,10 @@ using namespace cv;
 
 typedef struct
 {
-	vector<Point> contour;     //Position Pattern 的轮廓
-	RotatedRect outerRect;     //外包括最小旋转矩形
-}PositionPattern;
+	vector<Point> contour;        //marker 的轮廓
+	RotatedRect outerRect;        //外包括最小旋转矩形
+}Marker;
 
-typedef struct
-{
-
-}QRCode;
 
 class Locator
 {
@@ -30,48 +26,49 @@ public:
 	//定位主函数
 	Mat locate(Mat &img);
 
-	//test----------------------------------------------------------
-	Mat locateByContours(Mat &img);
-	//--------------------------------------------------------------
-
 private:
-	//获取正则化的ROI
-	Mat getRegularROI(Mat &img, RotatedRect &rect, int ROISide);
 
-	//从X与Y方向判断是否为Position Pattern
-	bool judgePositionPatternByX(Mat &img);
-	bool judgePositionPatternByY(Mat &img);
+	void getQRCode(vector<Marker> &markerSet);
 
-	//获取QRCode
-	void getQRCode(vector<PositionPattern> posiPatterns);
+	Point2f findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f pointRT);
 
-	//test----------------------------------------------------------
-	//--------------------------------------------------------------
+	Point2f findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2f linePointB);
 
 	//两点间距离计算
-	inline double calcDistant(Point2f pointA, Point2f pointB)
+	inline float calcDistant(Point2f pointA, Point2f pointB)
 	{
-		double xDifference = pointA.x - pointB.x;
-		double yDifference = pointA.y - pointB.y;
+		float xDifference = pointA.x - pointB.x;
+		float yDifference = pointA.y - pointB.y;
 		return sqrt(xDifference * xDifference + yDifference * yDifference);
 	}
 
 	//计算两个向量的向量积
-	inline double calcCrossProduct(Vec2f vectorA, Vec2f vectorB)
+	inline float calcCrossProduct(Point2f vectorA, Point2f vectorB)
 	{
+		return vectorA.x * vectorB.y - vectorA.y * vectorB.x;
+	}
 
+	//点到两点确定的直线的距离
+	inline float distPointToLine(Point2f point, Point2f linePointA, Point2f linePointB)
+	{
+		float a, b, c;
+		float dist;
+
+		a = linePointA.y - linePointB.y;
+		b = -(linePointA.x - linePointB.x);
+		c = linePointA.x * linePointB.y - linePointB.x * linePointA.y;
+
+		dist = fabsf(a * point.x + b * point.y + c) / sqrt(a * a + b * b);
+		return dist;
 	}
 
 private:
 	Mat srcImage;
-	Mat positionPatternImage;
-	Mat locationImage;
+	Mat markerImage;
 	Mat QRCodeROI;
 
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
-	vector<PositionPattern> positionPatterns;
-	vector<Point> QRLocateContour;
-	QRCode targetQRCode;
+	vector<Marker> markerSet;
 };
 #endif

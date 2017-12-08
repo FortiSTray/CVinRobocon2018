@@ -7,11 +7,6 @@
 using namespace std;
 using namespace cv;
 
-#define LEFT_TOP     1
-#define LEFT_BOTTOM  2
-#define RIGHT_TOP    3
-#define RIGHT_BOTTOM 4
-#define VIRTUAL_ORI  5
 
 //detect rectangle now
 typedef int orientationType;

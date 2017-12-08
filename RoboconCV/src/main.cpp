@@ -72,19 +72,9 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				==========================================================================================================
 				*/
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
-				//Mat basicImage = basicImage.zeros(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3);
-				//for (int  i = 0; i < srcImage.rows; i++)
-				//{
-				//	for (int j = 0; j < srcImage.cols; j++)
-				//	{
-				//		*basicImage.ptr<Vec3b>(i, j) = srcImage.ptr<Vec3b>(srcImage.rows - i - 1)[j];
-				//	}
-				//}	
-				//resize(basicImage, basicImage, Size(basicImage.cols / 8 * 3, basicImage.rows / 8 * 3), (0, 0), (0, 0), 3);
 				imshow("original", srcImage);
-
-				//CrtLocator.locate(srcImage);
-				CrtLocator.locateByContours(srcImage);
+					
+				CrtLocator.locate(srcImage);
 
 				int time = clock() - start;
 				cout << time << endl;
@@ -128,7 +118,7 @@ int main(int argc, char* argv[])
 
 	if (CameraEnumerateDevice(sCameraList, &iCameraNums) != CAMERA_STATUS_SUCCESS || iCameraNums == 0)
 	{
-		printf("No camera was found!");
+		printf("No camera was found!\n");
 		return FALSE;
 	}
 
@@ -137,7 +127,7 @@ int main(int argc, char* argv[])
 	if ((status = CameraInit(&sCameraList[0], -1, -1, &m_hCamera)) != CAMERA_STATUS_SUCCESS)
 	{
 		char msg[128];
-		sprintf_s(msg, "Failed to init the camera! Error code is %d", status);
+		sprintf_s(msg, "Failed to init the camera! Error code is %d\n", status);
 		printf(msg);
 		printf(CameraGetErrorString(status));
 		return FALSE;
