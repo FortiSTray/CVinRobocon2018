@@ -34,11 +34,12 @@ int main(int argc, char* argv[])
 		adaptiveThreshold(src, src, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
 		imshow("threshold.jpg", src);
 
-		//detect rectangle now
+
 		vector<vector<Point>> contours;
-		vector<Point> locateContour;
 		vector<Vec4i> hireachy;
-		Moments monents;
+		PositionPattern tmpPositionPattern;
+		vector<PositionPattern> positionPatterns;
+
 		findContours(src.clone(), contours, hireachy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
 
 		for (size_t t = 0; t < contours.size(); t++)
@@ -59,29 +60,31 @@ int main(int argc, char* argv[])
 				//waitKey(0);
 
 				int k = t;
-				int c = 0;
+				int countoursCounter = 0;
 
 
 				while (hireachy[k][2] != -1)
 				{
 					k = hireachy[k][2];
-					c = c + 1;
-					if (c >= 2)
+					countoursCounter++;
+					if (countoursCounter >= 2)
 					{
 						drawContours(locateResult, contours, static_cast<int>(t), Scalar(255, 0, 0), 2, 8);
-						locateContour.insert(locateContour.end(), contours[t].begin(), contours[t].end());
+						tmpPositionPattern.contour = contours[t];
+						tmpPositionPattern.outerRect = rect;
+						positionPatterns.push_back(tmpPositionPattern);
+
+						break;
 					}
 				}
 			}
+
+			getQRCode(positionPatterns);
 		}
-		//resize(locateResult, locateResult, Size(700, 700));
-		//resize(locateResult, locateResult, Size(525, 700));
-		if (!locateContour.empty())
+
+		if (positionPatterns.size() == 3)
 		{
-			RotatedRect rectReal = minAreaRect(locateContour);
-			Mat regularROI = GetRegularROI(src, rectReal);
-			imshow("result", locateResult);
-			imshow("ROI", regularROI);
+			
 		}
 
 	//	if (waitKey(5) == 27) break;

@@ -56,24 +56,10 @@ private:
 		return sqrt(xDifference * xDifference + yDifference * yDifference);
 	}
 
-	//两点斜率计算, alignement为垂直无斜率标志
-	inline double calcSlope(Point2f pointA, Point2f pointB, int& alignement)
+	//计算两个向量的向量积
+	inline double calcCrossProduct(Vec2f vectorA, Vec2f vectorB)
 	{
-		float xDifference, yDifference;
-		xDifference = pointB.x - pointA.x;
-		yDifference = pointB.y - pointA.y;
 
-		if (yDifference != 0)
-		{
-			alignement = 1;
-			return (yDifference / xDifference);
-		}
-		
-		else   // Make sure we are not dividing by zero; so use 'alignement' flag
-		{
-			alignement = 0;
-			return 0.0;
-		}
 	}
 
 private:

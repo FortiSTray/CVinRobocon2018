@@ -161,3 +161,221 @@ bool JudgeCornerByY(Mat &img)
 
 #undef ERROR_RANGE
 }
+
+void getQRCode(vector<PositionPattern> &posiPatterns)
+{
+	if (posiPatterns.size() == (size_t)3)
+	{
+		Point pointA = posiPatterns[0].outerRect.center;
+		Point pointB = posiPatterns[1].outerRect.center;
+		Point pointC = posiPatterns[2].outerRect.center;
+
+		float distantAB = calcDistant(pointA, pointB);
+		float distantBC = calcDistant(pointB, pointC);
+		float distantAC = calcDistant(pointA, pointC);
+
+		Point pointLeftTop;
+		Point pointLeftBottom;
+		Point pointRightTop;
+		Point pointVirtual;
+
+		RotatedRect rectLeftTop;
+		RotatedRect rectLeftBottom;
+		RotatedRect rectRightTop;
+
+		Point pointTemp;
+
+		Point2f vectorA;
+		Point2f vectorB;
+
+		Point2f tempCorners[4];
+
+		Point cornerLeftTop;
+		Point cornerLeftBottom;
+		Point cornerRightTop;
+
+		Point2f srcCorner[3];
+		Point2f dstCorner[3];
+
+		float tempDist;
+
+		rectLeftTop = posiPatterns[0].outerRect;
+
+		//找出三个点
+		if (distantAB > distantBC && distantAB > distantAC)
+		{
+			pointLeftTop = pointC;
+			rectLeftTop = posiPatterns[2].outerRect;
+
+			vectorA.x = pointA.x - pointLeftTop.x;
+			vectorA.y = pointA.y - pointLeftTop.y;
+			vectorB.x = pointB.x - pointLeftTop.x;
+			vectorB.y = pointB.y - pointLeftTop.y;
+
+			if (calcCrossProduct(vectorA, vectorB) > 0)
+			{
+				pointLeftBottom = pointB;
+				pointRightTop = pointA;
+				rectLeftBottom = posiPatterns[1].outerRect;
+				rectRightTop = posiPatterns[0].outerRect;
+			}
+			else
+			{
+				pointLeftBottom = pointA;
+				pointRightTop = pointB;
+				rectLeftBottom = posiPatterns[0].outerRect;
+				rectRightTop = posiPatterns[1].outerRect;
+			}
+		}
+		else if (distantBC > distantAB && distantBC > distantAC)
+		{
+			pointLeftTop = pointA;
+			rectLeftTop = posiPatterns[0].outerRect;
+
+			vectorA.x = pointB.x - pointLeftTop.x;
+			vectorA.y = pointB.y - pointLeftTop.y;
+			vectorB.x = pointC.x - pointLeftTop.x;
+			vectorB.y = pointC.y - pointLeftTop.y;
+
+			if (calcCrossProduct(vectorA, vectorB) > 0)
+			{
+				pointLeftBottom = pointC;
+				pointRightTop = pointB;
+				rectLeftBottom = posiPatterns[2].outerRect;
+				rectRightTop = posiPatterns[1].outerRect;
+			}
+			else
+			{
+				pointLeftBottom = pointB;
+				pointRightTop = pointC;
+				rectLeftBottom = posiPatterns[1].outerRect;
+				rectRightTop = posiPatterns[2].outerRect;
+			}
+		}
+		else if (distantAC > distantAB && distantAC > distantBC)
+		{
+			pointLeftTop = pointB;
+			rectLeftTop = posiPatterns[1].outerRect;
+
+			vectorA.x = pointA.x - pointLeftTop.x;
+			vectorA.y = pointA.y - pointLeftTop.y;
+			vectorB.x = pointC.x - pointLeftTop.x;
+			vectorB.y = pointC.y - pointLeftTop.y;
+
+			if (calcCrossProduct(vectorA, vectorB) > 0)
+			{
+				pointLeftBottom = pointC;
+				pointRightTop = pointA;
+				rectLeftBottom = posiPatterns[2].outerRect;
+				rectRightTop = posiPatterns[0].outerRect;
+			}
+			else
+			{
+				pointLeftBottom = pointA;
+				pointRightTop = pointC;
+				rectLeftBottom = posiPatterns[0].outerRect;
+				rectRightTop = posiPatterns[2].outerRect;
+			}
+		}
+		else {}
+		
+		//找出右下虚拟点
+		pointVirtual = findPointVirtual(pointLeftTop, pointLeftBottom, pointRightTop);
+
+		//找出二维码的三个角
+		rectLeftTop.points(tempCorners);
+		cornerLeftTop = findFarthestPoint(tempCorners, pointLeftBottom, pointRightTop);
+
+		rectLeftBottom.points(tempCorners);
+		cornerLeftBottom = findFarthestPoint(tempCorners, pointLeftTop, pointVirtual);
+
+		rectRightTop.points(tempCorners);
+		cornerRightTop = findFarthestPoint(tempCorners, pointLeftTop, pointVirtual);
+
+		Mat temp = imread("QRCode.jpg");
+		Mat output;
+		circle(temp, cornerLeftTop, 3, Scalar(255, 255, 0));
+		circle(temp, cornerLeftBottom, 3, Scalar(0, 255, 0));
+		circle(temp, cornerRightTop, 3, Scalar(0, 0, 255));
+		imshow("point", temp);
+
+		srcCorner[0] = cornerLeftTop;
+		srcCorner[1] = cornerLeftBottom;
+		srcCorner[2] = cornerRightTop;
+
+		dstCorner[0] = Point(0, 0);
+		dstCorner[1] = Point(0, 50);
+		dstCorner[2] = Point(50, 0);
+
+		Mat affineMatrix;
+		affineMatrix = getAffineTransform(srcCorner, dstCorner);
+		warpAffine(temp, output, affineMatrix, Size(50, 50));
+		imshow("QR", output);
+	}
+}
+
+//两点间距离计算
+double calcDistant(Point2f pointA, Point2f pointB)
+{
+	double xDifference = pointA.x - pointB.x;
+	double yDifference = pointA.y - pointB.y;
+	return sqrt(xDifference * xDifference + yDifference * yDifference);
+}
+
+double calcCrossProduct(Point2f vectorA, Point2f vectorB)
+{
+	return vectorA.x * vectorB.y - vectorA.y * vectorB.x;
+}
+
+Point2f findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f pointRT)
+{
+	Point2f vectorA;
+	Point2f vectorB;
+	Point2f vectorTarget;
+	Point2f pointVirtual;
+
+	vectorA.x = pointLB.x - pointLT.x;
+	vectorA.y = pointLB.y - pointLT.y;
+	vectorB.x = pointRT.x - pointLT.x;
+	vectorB.y = pointRT.y - pointLT.y;
+
+	vectorTarget.x = vectorA.x + vectorB.x;
+	vectorTarget.y = vectorA.y + vectorB.y;
+
+	pointVirtual.x = pointLT.x + vectorTarget.x;
+	pointVirtual.y = pointLT.y + vectorTarget.y;
+
+	return pointVirtual;
+}
+
+double distPointToLine(Point2f point, Point2f linePointA, Point2f linePointB)
+{
+	double a, b, c;
+	double dist;
+
+	a = linePointA.y - linePointB.y;
+	b = -(linePointA.x - linePointB.x);
+	c = linePointA.x * linePointB.y - linePointB.x * linePointA.y;
+
+	dist = fabsf(a * point.x + b * point.y + c) / sqrt(a * a + b * b);
+	return dist;
+}
+
+Point2f findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2f linePointB)
+{
+	float tempDist = 0.0f;
+	float farthestDist = 0.0f;
+	Point2f farthestPoint;
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		tempDist = distPointToLine(pointSet[i], linePointA, linePointB);
+		if (tempDist > farthestDist)
+		{
+			farthestDist = tempDist;
+			farthestPoint = pointSet[i];
+		}
+	}
+
+	return farthestPoint;
+}
