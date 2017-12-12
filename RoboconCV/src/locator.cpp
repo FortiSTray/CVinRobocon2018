@@ -11,51 +11,54 @@ Locator::~Locator(void)
 
 Mat Locator::locate(Mat &img)
 {
-	Marker tmpMarker;
+	//变量 & 对象定义及初始化
 	markerSet.erase(markerSet.begin(), markerSet.end());
-
 	srcImage = img.clone();
-	markerImage = img.clone();
+	debugImage = img.clone();
 
-	namedWindow("Src", CV_WINDOW_AUTOSIZE);
-	imshow("Src", srcImage);
+	//图像初步处理
+	cvtColor(srcImage, processImage, COLOR_BGR2GRAY);
+	medianBlur(processImage, processImage, 3);
+	//Canny(processImage, processImage, 100, 200, 3);
+	//threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+	adaptiveThreshold(processImage, processImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 41, 0);
+	imshow("After Process", processImage);
 
-	cvtColor(srcImage, srcImage, COLOR_BGR2GRAY);
-	//medianBlur(srcImage, srcImage, 3);
-	//imshow("blur", srcImage);
-	//threshold(srcImage, srcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-	adaptiveThreshold(srcImage, srcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
-	imshow("Threshold", srcImage);
+	//寻找轮廓，并存储轮廓的层次信息
+	findContours(processImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
 
-	//detect rectangle now
-	findContours(srcImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
-
+	//遍历轮廓
 	for (size_t i = 0; i < contours.size(); i++)
 	{
+		//轮廓面积排除不符合轮廓
 		float area = static_cast<float>(contourArea(contours[i]));
-		if (area < 100) continue;
-		RotatedRect rect = minAreaRect(contours[i]);
+		if (area < 100) { continue; }
 
-		//根据矩形特征进行几何分析
+		////四边形拟合排除不符合轮廓
+		//vector<Point> approxCurve;
+		//approxPolyDP(contours[i], approxCurve, arcLength(contours[i], true) * 0.02, true);
+		//if (approxCurve.size() != 4) { continue; }     // only quadrilaterals contours are examined
+
+		RotatedRect rect = minAreaRect(contours[i]);
 		float rectWidth = rect.size.width;
 		float rectHeight = rect.size.height;
 		float ratio = min(rectWidth, rectHeight) / max(rectWidth, rectHeight);
 
-		if (ratio > 0.85 && rectWidth < srcImage.cols / 4 && rectHeight < srcImage.rows / 4)
+		//矩形的长宽比以及边长范围排除不符合轮廓
+		if (ratio > 0.85 && rectWidth < processImage.cols / 4 && rectHeight < processImage.rows / 4)
 		{
 			int num = i;
 			int layerCounter = 0;
 
+			//统计轮廓层次
 			while (hierarchy[num][2] != -1)
 			{
 				num = hierarchy[num][2];
 				layerCounter = layerCounter + 1;
 				if (layerCounter >= 2)
 				{
-					drawContours(markerImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
-					tmpMarker.contour = contours[i];
-					tmpMarker.outerRect = rect;
-					markerSet.push_back(tmpMarker);
+					drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
+					markerSet.push_back(rect);
 
 					break;
 				}
@@ -64,145 +67,103 @@ Mat Locator::locate(Mat &img)
 	}
 
 	getQRCode(markerSet);
+	imshow("Debug", debugImage);
 
 	return QRCodeROI;
 }
 
+//从三个marker的信息中获取QRCode
 void Locator::getQRCode(vector<Marker> &markerSet)
 {
 	if (markerSet.size() == (size_t)3)
 	{
-		Point2f pointA = markerSet[0].outerRect.center;
-		Point2f pointB = markerSet[1].outerRect.center;
-		Point2f pointC = markerSet[2].outerRect.center;
+		//三个 Marker 中心点两两计算距离
+		float distanceAB = calcDistance(markerSet[0].center, markerSet[1].center);
+		float distanceBC = calcDistance(markerSet[1].center, markerSet[2].center);
+		float distanceAC = calcDistance(markerSet[0].center, markerSet[2].center);
 
-		float distantAB = calcDistant(pointA, pointB);
-		float distantBC = calcDistant(pointB, pointC);
-		float distantAC = calcDistant(pointA, pointC);
+		Marker tempMarkerA;
+		Marker tempMarkerB;
 
+		Point2f vectorA;
+		Point2f vectorB;
+
+		//QRCode 四个Marker中心点
 		Point2f pointLeftTop;
 		Point2f pointLeftBottom;
 		Point2f pointRightTop;
 		Point2f pointVirtual;
 
-		RotatedRect rectLeftTop;
-		RotatedRect rectLeftBottom;
-		RotatedRect rectRightTop;
+		//临时存储 Marker 的四个角
+		Point2f markerCorners[4];
 
-		Point2f pointTemp;
-
-		Point2f vectorA;
-		Point2f vectorB;
-
-		Point2f tempCorners[4];
-
-		Point2f cornerLeftTop;
-		Point2f cornerLeftBottom;
-		Point2f cornerRightTop;
-
+		//仿射变换的源顶点和目标顶点
 		Point2f srcCorner[3];
 		Point2f dstCorner[3];
 
-		rectLeftTop = markerSet[0].outerRect;
-
-		//找出三个点
-		if (distantAB > distantBC && distantAB > distantAC)
+		//找出左上顶点的 Marker
+		if (distanceAB > distanceBC && distanceAB > distanceAC)
 		{
-			pointLeftTop = pointC;
-			rectLeftTop = markerSet[2].outerRect;
+			markerLeftTop = markerSet[2];
 
-			vectorA.x = pointA.x - pointLeftTop.x;
-			vectorA.y = pointA.y - pointLeftTop.y;
-			vectorB.x = pointB.x - pointLeftTop.x;
-			vectorB.y = pointB.y - pointLeftTop.y;
-
-			if (calcCrossProduct(vectorA, vectorB) > 0)
-			{
-				pointLeftBottom = pointB;
-				pointRightTop = pointA;
-				rectLeftBottom = markerSet[1].outerRect;
-				rectRightTop = markerSet[0].outerRect;
-			}
-			else
-			{
-				pointLeftBottom = pointA;
-				pointRightTop = pointB;
-				rectLeftBottom = markerSet[0].outerRect;
-				rectRightTop = markerSet[1].outerRect;
-			}
+			tempMarkerA = markerSet[0];
+			tempMarkerB = markerSet[1];
 		}
-		else if (distantBC > distantAB && distantBC > distantAC)
+		else if (distanceBC > distanceAB && distanceBC > distanceAC)
 		{
-			pointLeftTop = pointA;
-			rectLeftTop = markerSet[0].outerRect;
+			markerLeftTop = markerSet[0];
 
-			vectorA.x = pointB.x - pointLeftTop.x;
-			vectorA.y = pointB.y - pointLeftTop.y;
-			vectorB.x = pointC.x - pointLeftTop.x;
-			vectorB.y = pointC.y - pointLeftTop.y;
-
-			if (calcCrossProduct(vectorA, vectorB) > 0)
-			{
-				pointLeftBottom = pointC;
-				pointRightTop = pointB;
-				rectLeftBottom = markerSet[2].outerRect;
-				rectRightTop = markerSet[1].outerRect;
-			}
-			else
-			{
-				pointLeftBottom = pointB;
-				pointRightTop = pointC;
-				rectLeftBottom = markerSet[1].outerRect;
-				rectRightTop = markerSet[2].outerRect;
-			}
+			tempMarkerA = markerSet[1];
+			tempMarkerB = markerSet[2];
 		}
-		else if (distantAC > distantAB && distantAC > distantBC)
+		else if (distanceAC > distanceAB && distanceAC > distanceBC)
 		{
-			pointLeftTop = pointB;
-			rectLeftTop = markerSet[1].outerRect;
+			markerLeftTop = markerSet[1];
 
-			vectorA.x = pointA.x - pointLeftTop.x;
-			vectorA.y = pointA.y - pointLeftTop.y;
-			vectorB.x = pointC.x - pointLeftTop.x;
-			vectorB.y = pointC.y - pointLeftTop.y;
-
-			if (calcCrossProduct(vectorA, vectorB) > 0)
-			{
-				pointLeftBottom = pointC;
-				pointRightTop = pointA;
-				rectLeftBottom = markerSet[2].outerRect;
-				rectRightTop = markerSet[0].outerRect;
-			}
-			else
-			{
-				pointLeftBottom = pointA;
-				pointRightTop = pointC;
-				rectLeftBottom = markerSet[0].outerRect;
-				rectRightTop = markerSet[2].outerRect;
-			}
+			tempMarkerA = markerSet[0];
+			tempMarkerB = markerSet[2];
 		}
 		else {}
 
-		//找出右下虚拟点
+		//找出左下和右上的 Marker
+		vectorA.x = tempMarkerA.center.x - markerLeftTop.center.x;
+		vectorA.y = tempMarkerA.center.y - markerLeftTop.center.y;
+		vectorB.x = tempMarkerB.center.x - markerLeftTop.center.x;
+		vectorB.y = tempMarkerB.center.y - markerLeftTop.center.y;
+
+		if (calcCrossProduct(vectorA, vectorB) > 0)
+		{
+			markerLeftBottom = tempMarkerB;
+			markerRightTop = tempMarkerA;
+		}
+		else
+		{
+			markerLeftBottom = tempMarkerA;
+			markerRightTop = tempMarkerB;
+		}
+
+		//找出四个 Marker 中心点
+		pointLeftTop = markerLeftTop.center;
+		pointLeftBottom = markerLeftBottom.center;
+		pointRightTop = markerRightTop.center;
 		pointVirtual = findPointVirtual(pointLeftTop, pointLeftBottom, pointRightTop);
 
 		//找出二维码的三个角
-		rectLeftTop.points(tempCorners);
-		cornerLeftTop = findFarthestPoint(tempCorners, pointLeftBottom, pointRightTop);
+		markerLeftTop.points(markerCorners);
+		cornerLeftTop = findFarthestPoint(markerCorners, pointLeftBottom, pointRightTop);
 
-		rectLeftBottom.points(tempCorners);
-		cornerLeftBottom = findFarthestPoint(tempCorners, pointLeftTop, pointVirtual);
+		markerLeftBottom.points(markerCorners);
+		cornerLeftBottom = findFarthestPoint(markerCorners, pointLeftTop, pointVirtual);
 
-		rectRightTop.points(tempCorners);
-		cornerRightTop = findFarthestPoint(tempCorners, pointLeftTop, pointVirtual);
+		markerRightTop.points(markerCorners);
+		cornerRightTop = findFarthestPoint(markerCorners, pointLeftTop, pointVirtual);
 
-		Mat temp = srcImage.clone();
-		Mat output;
-		circle(temp, cornerLeftTop, 3, Scalar(255, 255, 0));
-		circle(temp, cornerLeftBottom, 3, Scalar(0, 255, 0));
-		circle(temp, cornerRightTop, 3, Scalar(0, 0, 255));
-		imshow("point", temp);
+		//debug
+		circle(debugImage, cornerLeftTop, 3, Scalar(255, 255, 0));
+		circle(debugImage, cornerLeftBottom, 3, Scalar(0, 255, 0));
+		circle(debugImage, cornerRightTop, 3, Scalar(0, 0, 255));
 
+		//为仿射变换的源顶点和目标顶点赋值
 		srcCorner[0] = cornerLeftTop;
 		srcCorner[1] = cornerLeftBottom;
 		srcCorner[2] = cornerRightTop;
@@ -211,13 +172,14 @@ void Locator::getQRCode(vector<Marker> &markerSet)
 		dstCorner[1] = Point(0, 50);
 		dstCorner[2] = Point(50, 0);
 
+		//仿射变换
 		Mat affineMatrix;
 		affineMatrix = getAffineTransform(srcCorner, dstCorner);
-		warpAffine(temp, output, affineMatrix, Size(50, 50));
-		imshow("QR", output);
+		warpAffine(srcImage, QRCodeROI, affineMatrix, Size(50, 50));
 	}
 }
 
+//寻找右下角的虚拟 Marker 中心点
 Point2f Locator::findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f pointRT)
 {
 	Point2f vectorA;
@@ -239,6 +201,7 @@ Point2f Locator::findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f poin
 	return pointVirtual;
 }
 
+//寻找一个点集中距离一条直线最远的点
 Point2f Locator::findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2f linePointB)
 {
 	float tempDist = 0.0f;

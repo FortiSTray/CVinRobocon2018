@@ -33,9 +33,6 @@ char		    g_CameraName[64];
 
 Locator CrtLocator;
 
-//临时变量
-int start = 0;
-
 /*图像抓取线程，主动调用SDK接口函数获取图像*/
 UINT WINAPI uiDisplayThread(LPVOID lpParam)
 {
@@ -71,14 +68,24 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				                                               Main Task
 				==========================================================================================================
 				*/
+
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
-				imshow("original", srcImage);
-					
-				CrtLocator.locate(srcImage);
+				imshow("Original", srcImage);
+
+				//临时变量
+				int start = 0;
+				start = clock();
+
+				Mat QRCodeImage;
+				QRCodeImage = CrtLocator.locate(srcImage);
+				if (!QRCodeImage.empty())
+				{
+					imshow("QRCode", QRCodeImage);
+				}
 
 				int time = clock() - start;
 				cout << time << endl;
-				start = clock();
+				
 				/*
 				==========================================================================================================
 				                                                   End
