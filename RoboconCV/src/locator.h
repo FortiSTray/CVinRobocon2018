@@ -9,6 +9,7 @@ using namespace cv;
 
 #define REGULAR_CORNER_SIDE 70
 #define REGULAR_QRCODE_SIDE 28
+#define STANDBY_MARKER_SIZE 10
 
 typedef RotatedRect Marker;
 
@@ -70,6 +71,10 @@ private:
 	//轮廓定义
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
+	
+	//预备 Marker
+	Marker standbyMarker[STANDBY_MARKER_SIZE];
+	int standbyMarkerCnt;
 
 	//定位标记集合定义
 	vector<Marker> markerSet;

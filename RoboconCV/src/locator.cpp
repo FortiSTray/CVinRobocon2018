@@ -18,52 +18,60 @@ Mat Locator::locate(Mat &img)
 
 	//图像初步处理
 	cvtColor(srcImage, processImage, COLOR_BGR2GRAY);
-	medianBlur(processImage, processImage, 3);
+	//medianBlur(processImage, processImage, 3);
 	//Canny(processImage, processImage, 100, 200, 3);
-	//threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-	adaptiveThreshold(processImage, processImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 41, 0);
+	threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+	//adaptiveThreshold(processImage, processImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 41, 0);
 	imshow("After Process", processImage);
 
 	//寻找轮廓，并存储轮廓的层次信息
 	findContours(processImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
 
 	//遍历轮廓
+	standbyMarkerCnt = 0;
+
 	for (size_t i = 0; i < contours.size(); i++)
 	{
-		//轮廓面积排除不符合轮廓
+		//剔除轮廓面积过小的轮廓
 		float area = static_cast<float>(contourArea(contours[i]));
 		if (area < 100) { continue; }
 
-		////四边形拟合排除不符合轮廓
-		//vector<Point> approxCurve;
-		//approxPolyDP(contours[i], approxCurve, arcLength(contours[i], true) * 0.02, true);
-		//if (approxCurve.size() != 4) { continue; }     // only quadrilaterals contours are examined
-
+		//剔除矩形长宽比不符以及边长过长的轮廓
 		RotatedRect rect = minAreaRect(contours[i]);
 		float rectWidth = rect.size.width;
 		float rectHeight = rect.size.height;
 		float ratio = min(rectWidth, rectHeight) / max(rectWidth, rectHeight);
 
-		//矩形的长宽比以及边长范围排除不符合轮廓
-		if (ratio > 0.85 && rectWidth < processImage.cols / 4 && rectHeight < processImage.rows / 4)
+		if (ratio < 0.85) { continue; }
+		if (rectWidth > processImage.cols / 4 || rectHeight > processImage.rows / 4) { continue; }
+
+		//统计轮廓层次
+		int num = i;
+		int layerCounter = 0;
+
+		while (hierarchy[num][2] != -1)
 		{
-			int num = i;
-			int layerCounter = 0;
-
-			//统计轮廓层次
-			while (hierarchy[num][2] != -1)
+			num = hierarchy[num][2];
+			layerCounter = layerCounter + 1;
+			if (layerCounter >= 2)
 			{
-				num = hierarchy[num][2];
-				layerCounter = layerCounter + 1;
-				if (layerCounter >= 2)
-				{
-					drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
-					markerSet.push_back(rect);
+				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
+				standbyMarker[standbyMarkerCnt++] = rect;
 
-					break;
-				}
+				break;
 			}
 		}
+
+		//如果预备 Marker 数组填满则跳出
+		if (standbyMarkerCnt >= STANDBY_MARKER_SIZE)
+		{
+			break;
+		}
+	}
+
+	for (int i = 0; i < standbyMarkerCnt; i++)
+	{
+		markerSet.push_back(standbyMarker[i]);
 	}
 
 	getQRCode(markerSet);
@@ -159,9 +167,9 @@ void Locator::getQRCode(vector<Marker> &markerSet)
 		cornerRightTop = findFarthestPoint(markerCorners, pointLeftTop, pointVirtual);
 
 		//debug
-		circle(debugImage, cornerLeftTop, 3, Scalar(255, 255, 0));
-		circle(debugImage, cornerLeftBottom, 3, Scalar(0, 255, 0));
-		circle(debugImage, cornerRightTop, 3, Scalar(0, 0, 255));
+		circle(debugImage, cornerLeftTop,    3, Scalar(255, 0, 0), 2);
+		circle(debugImage, cornerLeftBottom, 3, Scalar(0, 255, 0), 2);
+		circle(debugImage, cornerRightTop,   3, Scalar(0, 0, 255), 2);
 
 		//为仿射变换的源顶点和目标顶点赋值
 		srcCorner[0] = cornerLeftTop;
@@ -169,13 +177,17 @@ void Locator::getQRCode(vector<Marker> &markerSet)
 		srcCorner[2] = cornerRightTop;
 
 		dstCorner[0] = Point(0, 0);
-		dstCorner[1] = Point(0, 50);
-		dstCorner[2] = Point(50, 0);
+		dstCorner[1] = Point(0, 49);
+		dstCorner[2] = Point(49, 0);
 
 		//仿射变换
 		Mat affineMatrix;
 		affineMatrix = getAffineTransform(srcCorner, dstCorner);
 		warpAffine(srcImage, QRCodeROI, affineMatrix, Size(50, 50));
+	}
+	else
+	{
+		QRCodeROI = Mat(50, 50, CV_8UC3, Scalar(0, 0, 0));
 	}
 }
 

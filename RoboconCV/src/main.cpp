@@ -78,10 +78,7 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 
 				Mat QRCodeImage;
 				QRCodeImage = CrtLocator.locate(srcImage);
-				if (!QRCodeImage.empty())
-				{
-					imshow("QRCode", QRCodeImage);
-				}
+				imshow("QRCode", QRCodeImage);
 
 				int time = clock() - start;
 				cout << time << endl;
