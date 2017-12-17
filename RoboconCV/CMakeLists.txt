@@ -23,9 +23,9 @@ endif()
 
 # Camera Driver
 include_directories(${CMAKE_SOURCE_DIR}/MindVisionAPI/Include)
-target_link_libraries(${PROJ_NAME} ${CMAKE_SOURCE_DIR}/MindVisionAPI/Library/MVCAMSDK.lib)
+target_link_libraries(${PROJ_NAME} ${CMAKE_SOURCE_DIR}/MindVisionAPI/Library/MVCAMSDK_X64.lib)
 #include_directories($ENV{MV_DIR}\\Include)
-#target_link_libraries(${PROJ_NAME} $ENV{MV_DIR}\\MVCAMSDK.lib)
+#target_link_libraries(${PROJ_NAME} $ENV{MV_DIR}\\MVCAMSDK_X64.lib)
 
 # ∂‡∫À¥¶¿Ì
 set_target_properties(${PROJ_NAME} PROPERTIES COMPILE_FLAGS "/MP")

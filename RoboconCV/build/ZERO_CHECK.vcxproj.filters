@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\2e95ba4965fb0d9b137726219c987d4f\generate.stamp.rule">
+    <CustomBuild Include="E:\nationcamera\RoboconCV\build\CMakeFiles\cc9761ebe563335847b3cdb12c189151\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{8DAE70B6-7E74-3640-9667-D2086229A17F}</UniqueIdentifier>
+      <UniqueIdentifier>{3D73FD15-123C-340D-9BD1-A4143CCF0ABC}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

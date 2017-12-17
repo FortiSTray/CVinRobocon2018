@@ -1,4 +1,7 @@
 #include "locator.h"
+#include "SerialPort.h"
+
+CSerialPort mySerialPort;
 
 Locator::Locator(void)
 {
@@ -14,13 +17,14 @@ Mat Locator::locate(Mat &img)
 	//变量 & 对象定义及初始化
 	markerSet.erase(markerSet.begin(), markerSet.end());
 	srcImage = img.clone();
-	debugImage = img.clone();
+	//debugImage = img.clone();
 
 	//图像初步处理
 	cvtColor(srcImage, processImage, COLOR_BGR2GRAY);
 	//medianBlur(processImage, processImage, 3);
 	//Canny(processImage, processImage, 100, 200, 3);
-	threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+	threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);\
+    debugImage = processImage.clone();
 	//adaptiveThreshold(processImage, processImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 41, 0);
 	imshow("After Process", processImage);
 
@@ -55,7 +59,7 @@ Mat Locator::locate(Mat &img)
 			layerCounter = layerCounter + 1;
 			if (layerCounter >= 2)
 			{
-				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
+				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 255, 255), -1, 8);
 				standbyMarker[standbyMarkerCnt++] = rect;
 
 				break;
@@ -177,17 +181,17 @@ void Locator::getQRCode(vector<Marker> &markerSet)
 		srcCorner[2] = cornerRightTop;
 
 		dstCorner[0] = Point(0, 0);
-		dstCorner[1] = Point(0, 49);
-		dstCorner[2] = Point(49, 0);
+		dstCorner[1] = Point(0, 99);
+		dstCorner[2] = Point(99, 0);
 
 		//仿射变换
 		Mat affineMatrix;
 		affineMatrix = getAffineTransform(srcCorner, dstCorner);
-		warpAffine(srcImage, QRCodeROI, affineMatrix, Size(50, 50));
+		warpAffine(debugImage, QRCodeROI, affineMatrix, Size(100, 100));
 	}
 	else
 	{
-		QRCodeROI = Mat(50, 50, CV_8UC3, Scalar(0, 0, 0));
+		QRCodeROI = Mat(100, 100, CV_8UC1, Scalar(0));
 	}
 }
 
@@ -231,4 +235,111 @@ Point2f Locator::findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2
 	}
 
 	return farthestPoint;
+}
+//提取处理后图片的信号量
+void Locator::ExtractingInformation(Mat img)
+{
+	//轮廓定义
+	vector<vector<Point>> contours;
+	vector<Vec4i> hierarchy;
+
+	findContours(img, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE, Point());
+
+	RotatedRect Rect[4];
+	size_t k = 0;
+	int leftCount = 0;
+	int rightCount = 0;
+	int upCount = 0;
+	int downCount = 0;
+
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		//剔除轮廓面积过小的轮廓
+		float area = static_cast<float>(contourArea(contours[i]));
+
+		if (area < 10 || area >700) { continue; }
+
+		//剔除矩形长宽比不符以及边长过长的轮廓
+		RotatedRect rect = minAreaRect(contours[i]);
+
+		float rectWidth = rect.size.width;
+		float rectHeight = rect.size.height;
+		float ratio = min(rectWidth, rectHeight) / max(rectWidth, rectHeight);
+		if (ratio < 0.85) { continue; }
+		if (rectWidth > processImage.cols / 4 || rectHeight > processImage.rows / 4) { continue; }
+		Rect[k] = rect;
+		//cout << Rect[k].center << endl;
+
+		if (Rect[k].center.x - 50 > 10) {
+			rightCount++;
+		}
+		else if (Rect[k].center.x - 50 < -10) {
+			leftCount++;
+		}
+		else if (Rect[k].center.y - 50 > 10) {
+			downCount++;
+		}
+		else if (Rect[k].center.y - 50 < -10) {
+			upCount++;
+		}
+		k++;
+	}
+	if (rightCount == 0 || leftCount == 0 || downCount == 0 || upCount == 0) {
+		SendMessageToUSB(NOT_HIT);
+	}
+	else if (rightCount == 1 || leftCount == 1 || downCount == 1 || upCount == 1) {
+		SendMessageToUSB(HIT);
+	}
+	else if (rightCount == 0 || leftCount == 1 || downCount == 0 || upCount == 1) {
+		SendMessageToUSB(LEFT_UP);
+	}
+	else if (rightCount == 0 || leftCount == 1 || downCount == 1 || upCount == 0) {
+		SendMessageToUSB(LEFT_DOWN);
+	}
+	else if (rightCount == 1 || leftCount == 0 || downCount == 0 || upCount == 1) {
+		SendMessageToUSB(RIGHT_UP);
+	}
+	else if (rightCount == 1 || leftCount == 0 || downCount == 1 || upCount == 0) {
+		SendMessageToUSB(RIGHT_DOWN);
+	}
+	else if (rightCount == 1 || leftCount == 1 || downCount == 1 || upCount == 0) {
+		SendMessageToUSB(FORWARD);
+	}
+	else if (rightCount == 1 || leftCount == 1 || downCount == 0 || upCount == 1) {
+		SendMessageToUSB(BACK);
+	}
+}
+
+int SerialPortInit(void) {
+	#define SERIAL_PORT_INIT_SUCCESS 1
+	#define SERIAL_PORT_INIT_FAULT 0
+	if (!mySerialPort.InitPort(9, CBR_115200))
+	{
+		std::cout << "initPort fail !" << std::endl;
+		return SERIAL_PORT_INIT_FAULT;
+	}
+	else
+	{
+		std::cout << "initPort success !" << std::endl;
+	}
+
+	if (!mySerialPort.OpenListenThread())
+	{
+		std::cout << "OpenListenThread fail !" << std::endl;
+		return SERIAL_PORT_INIT_FAULT;
+	}
+	else
+	{
+		std::cout << "OpenListenThread success !" << std::endl;
+	}
+		return SERIAL_PORT_INIT_SUCCESS;
+}
+//串口发数
+void SendMessageToUSB(unsigned char getMessage) {
+	if (mySerialPort.WriteData(&getMessage, 1) == false) {
+		std::cout << "fault" << std::endl;
+	}
+	else {
+		std::cout << "ok" << std::endl;
+	}
 }

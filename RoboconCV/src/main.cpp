@@ -33,6 +33,8 @@ char		    g_CameraName[64];
 
 Locator CrtLocator;
 
+int serialPortInitSignal = 0;
+
 /*图像抓取线程，主动调用SDK接口函数获取图像*/
 UINT WINAPI uiDisplayThread(LPVOID lpParam)
 {
@@ -68,7 +70,11 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				                                               Main Task
 				==========================================================================================================
 				*/
-
+				if (serialPortInitSignal == 0)
+				{
+					if(SerialPortInit()==1)
+					serialPortInitSignal=1;
+				}
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
 				imshow("Original", srcImage);
 
@@ -79,6 +85,8 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				Mat QRCodeImage;
 				QRCodeImage = CrtLocator.locate(srcImage);
 				imshow("QRCode", QRCodeImage);
+
+				CrtLocator.ExtractingInformation(QRCodeImage);
 
 				int time = clock() - start;
 				cout << time << endl;
@@ -117,6 +125,7 @@ int main(int argc, char* argv[])
 	CameraSdkStatus status;
 	tSdkCameraCapbility sCameraInfo;
 
+
 	//枚举设备，获得设备列表
 	iCameraNums = 10;//调用CameraEnumerateDevice前，先设置iCameraNums = 10，表示最多只读取10个设备，如果需要枚举更多的设备，请更改sCameraList数组的大小和iCameraNums的值
 
@@ -125,7 +134,6 @@ int main(int argc, char* argv[])
 		printf("No camera was found!\n");
 		return FALSE;
 	}
-
 	//该示例中，我们只假设连接了一个相机。因此，只初始化第一个相机。(-1,-1)表示加载上次退出前保存的参数，如果是第一次使用该相机，则加载默认参数.
 	//In this demo ,we just init the first camera.
 	if ((status = CameraInit(&sCameraList[0], -1, -1, &m_hCamera)) != CAMERA_STATUS_SUCCESS)
@@ -136,8 +144,7 @@ int main(int argc, char* argv[])
 		printf(CameraGetErrorString(status));
 		return FALSE;
 	}
-
-
+	
 	//Get properties description for this camera.
 	CameraGetCapability(m_hCamera, &sCameraInfo);//"获得该相机的特性描述"
 
@@ -174,6 +181,7 @@ int main(int argc, char* argv[])
 	CameraAlignFree(m_pFrameBuffer);
 
 	destroyWindow(g_CameraName);
+
 
 #ifdef USE_CALLBACK_GRAB_IMAGE
 	if (g_iplImage)

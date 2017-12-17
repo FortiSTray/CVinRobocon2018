@@ -1,48 +1,48 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
+    <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
+    <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="MinSizeRel|Win32">
+    <ProjectConfiguration Include="MinSizeRel|x64">
       <Configuration>MinSizeRel</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
       <Configuration>RelWithDebInfo</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3503F481-7AEA-3F10-805A-7E40083693EA}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{B47B94A8-4D7F-32DC-9B8B-6D180382D480}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
-    <Platform>Win32</Platform>
+    <Platform>x64</Platform>
     <ProjectName>RoboconCV</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
@@ -56,34 +56,34 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Code\CVinRobocon2018\RoboconCV\bin\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RoboconCV.dir\Debug\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RoboconCV</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Code\CVinRobocon2018\RoboconCV\bin\Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">RoboconCV.dir\Release\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">RoboconCV</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Code\CVinRobocon2018\RoboconCV\bin\MinSizeRel\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">RoboconCV.dir\MinSizeRel\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">RoboconCV</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Code\CVinRobocon2018\RoboconCV\bin\RelWithDebInfo\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">RoboconCV.dir\RelWithDebInfo\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">RoboconCV</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\nationcamera\RoboconCV\bin\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">RoboconCV.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">RoboconCV</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\nationcamera\RoboconCV\bin\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">RoboconCV.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">RoboconCV</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\nationcamera\RoboconCV\bin\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">RoboconCV.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">RoboconCV</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\nationcamera\RoboconCV\bin\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">RoboconCV.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">RoboconCV</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -102,10 +102,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;UNICODE;_UNICODE;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -113,23 +113,24 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stitching330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_superres330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videostab330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_aruco330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bgsegm330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bioinspired330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ccalib330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dpm330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_face330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_fuzzy330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_img_hash330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_line_descriptor330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_optflow330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_reg330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_rgbd330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_saliency330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stereo330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_structured_light330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_surface_matching330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_tracking330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xfeatures2d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ximgproc330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xobjdetect330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xphoto330d.lib;..\MindVisionAPI\Library\MVCAMSDK.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_shape330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_photo330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_calib3d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_phase_unwrapping330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dnn330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_video330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_datasets330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_plot330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_text330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_features2d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_flann330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_highgui330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ml330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videoio330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgcodecs330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_objdetect330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgproc330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_core330d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;..\MindVisionAPI\Library\MVCAMSDK_X64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/Debug/RoboconCV.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/Debug/RoboconCV.pdb</ProgramDataBaseFile>
+      <ImportLibrary>E:/nationcamera/RoboconCV/bin/Debug/RoboconCV.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/nationcamera/RoboconCV/bin/Debug/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -143,14 +144,15 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -158,23 +160,24 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stitching330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_superres330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videostab330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_aruco330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bgsegm330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bioinspired330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ccalib330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dpm330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_face330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_fuzzy330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_img_hash330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_line_descriptor330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_optflow330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_reg330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_rgbd330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_saliency330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stereo330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_structured_light330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_surface_matching330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_tracking330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xfeatures2d330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ximgproc330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xobjdetect330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xphoto330.lib;..\MindVisionAPI\Library\MVCAMSDK.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_shape330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_photo330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_calib3d330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_phase_unwrapping330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dnn330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_video330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_datasets330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_plot330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_text330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_features2d330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_flann330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_highgui330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ml330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videoio330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgcodecs330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_objdetect330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgproc330.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_core330.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330.lib;..\MindVisionAPI\Library\MVCAMSDK_X64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>No</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/Release/RoboconCV.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/Release/RoboconCV.pdb</ProgramDataBaseFile>
+      <ImportLibrary>E:/nationcamera/RoboconCV/bin/Release/RoboconCV.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/nationcamera/RoboconCV/bin/Release/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -188,14 +191,15 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -203,23 +207,24 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stitching330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_superres330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videostab330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_aruco330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bgsegm330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bioinspired330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ccalib330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dpm330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_face330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_fuzzy330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_img_hash330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_line_descriptor330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_optflow330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_reg330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_rgbd330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_saliency330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stereo330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_structured_light330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_surface_matching330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_tracking330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xfeatures2d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ximgproc330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xobjdetect330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xphoto330d.lib;..\MindVisionAPI\Library\MVCAMSDK.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_shape330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_photo330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_calib3d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_phase_unwrapping330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dnn330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_video330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_datasets330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_plot330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_text330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_features2d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_flann330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_highgui330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ml330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videoio330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgcodecs330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_objdetect330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgproc330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_core330d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;..\MindVisionAPI\Library\MVCAMSDK_X64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>No</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/MinSizeRel/RoboconCV.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/MinSizeRel/RoboconCV.pdb</ProgramDataBaseFile>
+      <ImportLibrary>E:/nationcamera/RoboconCV/bin/MinSizeRel/RoboconCV.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/nationcamera/RoboconCV/bin/MinSizeRel/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -237,10 +242,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -248,25 +253,26 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stitching330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_superres330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videostab330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_aruco330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bgsegm330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_bioinspired330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ccalib330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dpm330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_face330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_fuzzy330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_img_hash330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_line_descriptor330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_optflow330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_reg330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_rgbd330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_saliency330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_stereo330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_structured_light330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_surface_matching330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_tracking330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xfeatures2d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ximgproc330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xobjdetect330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_xphoto330d.lib;..\MindVisionAPI\Library\MVCAMSDK.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_shape330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_photo330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_calib3d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_phase_unwrapping330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_dnn330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_video330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_datasets330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_plot330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_text330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_features2d330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_flann330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_highgui330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_ml330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_videoio330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgcodecs330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_objdetect330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_imgproc330d.lib;C:\Code\opencv3Src\build\install\x86\vc15\lib\opencv_core330d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;D:\program files\opencv\opencv\build\x64\vc14\lib\opencv_world330d.lib;..\MindVisionAPI\Library\MVCAMSDK_X64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Code/CVinRobocon2018/RoboconCV/bin/RelWithDebInfo/RoboconCV.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Code/CVinRobocon2018/RoboconCV/bin/RelWithDebInfo/RoboconCV.pdb</ProgramDataBaseFile>
+      <ImportLibrary>E:/nationcamera/RoboconCV/bin/RelWithDebInfo/RoboconCV.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/nationcamera/RoboconCV/bin/RelWithDebInfo/RoboconCV.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+    <CustomBuild Include="E:\nationcamera\RoboconCV\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -274,12 +280,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -287,12 +293,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -300,12 +306,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -313,23 +319,23 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.cpp"  />
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\main.cpp"  />
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\recognizer.cpp"  />
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp"  />
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.h" />
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\recognizer.h" />
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.h" />
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\locator.cpp" />
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\main.cpp" />
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\recognizer.cpp" />
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\SerialPort\SerialPort.cpp" />
+    <ClInclude Include="..\src\SerialPort\SerialPort.h" />
+    <ClInclude Include="E:\nationcamera\RoboconCV\src\locator.h" />
+    <ClInclude Include="E:\nationcamera\RoboconCV\src\recognizer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Code\CVinRobocon2018\RoboconCV\build\ZERO_CHECK.vcxproj">
-      <Project>{70230A9C-7772-34AE-9571-DABA7C1346F2}</Project>
+    <ProjectReference Include="E:\nationcamera\RoboconCV\build\ZERO_CHECK.vcxproj">
+      <Project>{35983D18-FFDE-3C0F-9C62-1436B8418679}</Project>
       <Name>ZERO_CHECK</Name>
     </ProjectReference>
   </ItemGroup>

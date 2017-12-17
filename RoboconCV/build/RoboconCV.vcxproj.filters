@@ -1,39 +1,39 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.cpp">
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\locator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\main.cpp">
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\recognizer.cpp">
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\recognizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp">
+    <ClCompile Include="E:\nationcamera\RoboconCV\src\SerialPort\SerialPort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.h">
+    <ClInclude Include="E:\nationcamera\RoboconCV\src\locator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\recognizer.h">
+    <ClInclude Include="E:\nationcamera\RoboconCV\src\recognizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.h">
+    <ClInclude Include="..\src\SerialPort\SerialPort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt" />
+    <CustomBuild Include="E:\nationcamera\RoboconCV\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{B00364D6-76B5-3D5E-A898-9AE35925F20D}</UniqueIdentifier>
+      <UniqueIdentifier>{B6DA227A-B6A6-3AF5-BF27-FCE1EF7A68E0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{12E36502-6AA0-345C-9C37-71B61488DBB3}</UniqueIdentifier>
+      <UniqueIdentifier>{C614F9C9-1EC7-3C24-8E93-FE26923C4357}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

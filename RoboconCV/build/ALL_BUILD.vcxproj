@@ -1,48 +1,48 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
+    <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
+    <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="MinSizeRel|Win32">
+    <ProjectConfiguration Include="MinSizeRel|x64">
       <Configuration>MinSizeRel</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
       <Configuration>RelWithDebInfo</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{14E0453B-293D-3458-B565-9D37B6814C43}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{BEBE8FAC-C141-3871-85E1-8F75ECF568AF}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
-    <Platform>Win32</Platform>
+    <Platform>x64</Platform>
     <ProjectName>ALL_BUILD</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
@@ -56,14 +56,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -71,9 +71,9 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -81,9 +81,9 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -91,9 +91,9 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Code\opencv3Src\build\install\include;C:\Code\opencv3Src\build\install\include\opencv;C:\Code\CVinRobocon2018\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\program files\opencv\opencv\build\include;D:\program files\opencv\opencv\build\include\opencv;E:\nationcamera\RoboconCV\MindVisionAPI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -102,10 +102,10 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+    <CustomBuild Include="E:\nationcamera\RoboconCV\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -113,12 +113,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -126,12 +126,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -139,12 +139,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HC:/Code/CVinRobocon2018/RoboconCV -BC:/Code/CVinRobocon2018/RoboconCV/build --check-stamp-file C:/Code/CVinRobocon2018/RoboconCV/build/CMakeFiles/generate.stamp
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/nationcamera/RoboconCV/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"D:\program files\cmake-3.9.0-rc3-win64-x64\bin\cmake.exe" -HE:/nationcamera/RoboconCV -BE:/nationcamera/RoboconCV/build --check-stamp-file E:/nationcamera/RoboconCV/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -152,20 +152,20 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Code/CVinRobocon2018/RoboconCV/CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig-version.cmake;C:\Code\opencv3Src\build\install\OpenCVConfig.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVConfig.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-debug.cmake;C:\Code\opencv3Src\build\install\x86\vc15\lib\OpenCVModules-release.cmake;C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Code\CVinRobocon2018\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:/nationcamera/RoboconCV/CMakeLists.txt;E:\nationcamera\RoboconCV\CMakeLists.txt;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCCompiler.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeCXXCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;E:\nationcamera\RoboconCV\build\CMakeFiles\3.9.0-rc3\CMakeRCCompiler.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeRCInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig-version.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVConfig.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;D:\program files\cmake-3.9.0-rc3-win64-x64\share\cmake-3.9\Modules\FindPackageMessage.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-debug.cmake;D:\program files\opencv\opencv\build\x64\vc14\lib\OpenCVModules-release.cmake;E:\nationcamera\RoboconCV\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\nationcamera\RoboconCV\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Code\CVinRobocon2018\RoboconCV\build\ZERO_CHECK.vcxproj">
-      <Project>{70230A9C-7772-34AE-9571-DABA7C1346F2}</Project>
+    <ProjectReference Include="E:\nationcamera\RoboconCV\build\ZERO_CHECK.vcxproj">
+      <Project>{35983D18-FFDE-3C0F-9C62-1436B8418679}</Project>
       <Name>ZERO_CHECK</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Code\CVinRobocon2018\RoboconCV\build\RoboconCV.vcxproj">
-      <Project>{3503F481-7AEA-3F10-805A-7E40083693EA}</Project>
+    <ProjectReference Include="E:\nationcamera\RoboconCV\build\RoboconCV.vcxproj">
+      <Project>{B47B94A8-4D7F-32DC-9B8B-6D180382D480}</Project>
       <Name>RoboconCV</Name>
     </ProjectReference>
   </ItemGroup>

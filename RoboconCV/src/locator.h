@@ -3,6 +3,14 @@
 
 #include <iostream>
 #include "opencv2/opencv.hpp"
+#include "SerialPort.h"
+#include <Windows.h>
+#include <iostream> 
+#include <fstream> 
+#include <process.h>
+#include "SerialPort.h"
+#include <fstream>
+#include <opencv2\opencv.hpp>
 
 using namespace std;
 using namespace cv;
@@ -11,7 +19,21 @@ using namespace cv;
 #define REGULAR_QRCODE_SIDE 28
 #define STANDBY_MARKER_SIZE 10
 
+#define HIT (unsigned char)'1'
+#define NOT_HIT  (unsigned char)'2'
+#define LEFT_UP  (unsigned char)'3'
+#define LEFT_DOWN  (unsigned char)'4'
+#define RIGHT_UP  (unsigned char)'5'
+#define RIGHT_DOWN  (unsigned char)'6'
+#define FORWARD  (unsigned char)'7'
+#define BACK  (unsigned char)'8'
+
 typedef RotatedRect Marker;
+//串口初始化
+int SerialPortInit(void);
+//信息发送函数
+void SendMessageToUSB(unsigned char getMessage);
+
 
 class Locator
 {
@@ -21,6 +43,9 @@ public:
 
 	//QRCode定位主函数
 	Mat locate(Mat &img);
+
+	//提取信号量
+	void ExtractingInformation(Mat img);
 
 private:
 	//从三个marker的信息中获取QRCode
