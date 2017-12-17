@@ -41,6 +41,9 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 	BYTE*			pbyBuffer;
 	CameraSdkStatus status;
 
+	//临时变量
+	int start = 0;
+
 	while (!m_bExit)
 	{
 
@@ -72,9 +75,6 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
 				imshow("Original", srcImage);
 
-				//临时变量
-				int start = 0;
-				start = clock();
 
 				Mat QRCodeImage;
 				QRCodeImage = CrtLocator.locate(srcImage);
@@ -82,6 +82,7 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 
 				int time = clock() - start;
 				cout << time << endl;
+				start = clock();
 				
 				/*
 				==========================================================================================================

@@ -19,9 +19,9 @@ Mat Locator::locate(Mat &img)
 	//图像初步处理
 	cvtColor(srcImage, processImage, COLOR_BGR2GRAY);
 	//medianBlur(processImage, processImage, 3);
-	//Canny(processImage, processImage, 100, 200, 3);
-	threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-	//adaptiveThreshold(processImage, processImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 41, 0);
+	Canny(processImage, processImage, 100, 200, 3);
+	//threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+	//adaptiveThreshold(processImage, processImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
 	imshow("After Process", processImage);
 
 	//寻找轮廓，并存储轮廓的层次信息
@@ -53,7 +53,7 @@ Mat Locator::locate(Mat &img)
 		{
 			num = hierarchy[num][2];
 			layerCounter = layerCounter + 1;
-			if (layerCounter >= 2)
+			if (layerCounter >= 5)
 			{
 				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
 				standbyMarker[standbyMarkerCnt++] = rect;
