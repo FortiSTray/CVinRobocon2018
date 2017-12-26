@@ -245,7 +245,9 @@ Point2f Locator::findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2
 //从预备 Marker 的集合里面找出 真·Marker
 vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
 {
-	Marker tempMarker;
+	//按 width 或 angle 升序排列第 N 个元素的序号
+	int elem[10];
+	int tempElem;
 	
 	int serialNumByWidth[10];
 	int widthCnt = 0;
@@ -257,15 +259,17 @@ vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
 	vector<Marker> markerReal;
 
 	//根据 width 判断 Marker
+	for (int i = 0; i < MarkerCnt; i++) { elem[i] = i; }
+
 	for (int i = 0; i < MarkerCnt; i++)
 	{
 		for (int j = i + 1; j < MarkerCnt; j++)
 		{
-			if (standbyMarker[i].size.width > standbyMarker[j].size.width)
+			if (standbyMarker[elem[i]].size.width > standbyMarker[elem[j]].size.width)
 			{
-				tempMarker       = standbyMarker[i];
-				standbyMarker[i] = standbyMarker[j];
-				standbyMarker[j] = tempMarker      ;
+				tempElem = elem[i] ;
+				elem[i]  = elem[j] ;
+				elem[j]  = tempElem;
 			}
 		}
 	}
@@ -274,12 +278,12 @@ vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
 	{
 		widthCnt = 0;
 
-		while (standbyMarker[i + 1].size.width - standbyMarker[i].size.width < 5.0f)
+		while (standbyMarker[elem[i + 1]].size.width - standbyMarker[elem[i]].size.width < 5.0f)
 		{
-			serialNumByWidth[widthCnt++] = i++;
+			serialNumByWidth[widthCnt++] = elem[i++];
 			if (i == MarkerCnt - 1) { break; }
 		}
-		serialNumByWidth[widthCnt++] = i;
+		serialNumByWidth[widthCnt++] = elem[i];
 
 		if (widthCnt >= 3) { break; }
 	}
@@ -290,16 +294,18 @@ vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
 		return markerReal;
 	}
 
-	//跟据 angle 判断 Marker
+	//根据 angle 判断 Marker
+	for (int i = 0; i < MarkerCnt; i++) { elem[i] = i; }
+
 	for (int i = 0; i < MarkerCnt; i++)
 	{
 		for (int j = i + 1; j < MarkerCnt; j++)
 		{
-			if (standbyMarker[i].angle > standbyMarker[j].angle)
+			if (standbyMarker[elem[i]].angle > standbyMarker[elem[j]].angle)
 			{
-				tempMarker       = standbyMarker[i];
-				standbyMarker[i] = standbyMarker[j];
-				standbyMarker[j] = tempMarker      ;
+				tempElem = elem[i] ;
+				elem[i]  = elem[j] ;
+				elem[j]  = tempElem;
 			}
 		}
 	}
@@ -308,23 +314,23 @@ vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
 	{
 		angleCnt = 0;
 		
-		while (standbyMarker[i + 1].angle - standbyMarker[i].angle < 5.0f)
+		while (standbyMarker[elem[i + 1]].angle - standbyMarker[elem[i]].angle < 5.0f)
 		{
-			serialNumByAngle[angleCnt++] = i++;
+			serialNumByAngle[angleCnt++] = elem[i++];
 			if (angleCnt == MarkerCnt - 1) { break; }
 
 			if (i == MarkerCnt - 1)
 			{
 				angleScanDoneFlag = 1;
-				if (standbyMarker[0].angle - standbyMarker[MarkerCnt - 1].angle + 90.0f < 5.0f)
+				if (standbyMarker[elem[0]].angle - standbyMarker[elem[MarkerCnt - 1]].angle + 90.0f < 5.0f)
 				{
-					serialNumByAngle[angleCnt++] = MarkerCnt - 1;
+					serialNumByAngle[angleCnt++] = elem[MarkerCnt - 1];
 					i = 0;
 					if (angleCnt == MarkerCnt - 1) { break; }
 				}
 			}
 		}
-		serialNumByAngle[angleCnt++] = i;
+		serialNumByAngle[angleCnt++] = elem[i];
 
 		if (angleCnt >= 3 || angleScanDoneFlag == 1) { break; }
 	}
