@@ -7,11 +7,16 @@
 using namespace std;
 using namespace cv;
 
-#define REGULAR_CORNER_SIDE 70
-#define REGULAR_QRCODE_SIDE 28
-#define STANDBY_MARKER_SIZE 10
+#define REGULAR_QRCODE_SIDE 50
+#define STANDBY_MARKER_NUM 10
 
 typedef RotatedRect Marker;
+
+typedef struct
+{
+	Mat image;
+	bool lable;
+}QRCode;
 
 class Locator
 {
@@ -19,20 +24,23 @@ public:
 	Locator(void);
 	~Locator(void);
 
-	//QRCode¶¨Î»Ö÷º¯Êı
-	Mat locate(Mat &img);
+	//QRCodeå®šä½ä¸»å‡½æ•°
+	QRCode locate(Mat &img);
 
 private:
-	//´ÓÈı¸ömarkerµÄĞÅÏ¢ÖĞ»ñÈ¡QRCode
+	//ä»ä¸‰ä¸ªmarkerçš„ä¿¡æ¯ä¸­è·å–QRCode
 	void getQRCode(vector<Marker> &markerSet);
 
-	//Ñ°ÕÒÓÒÏÂ½ÇµÄĞéÄâmarkerÖĞĞÄµã
+	//å¯»æ‰¾å³ä¸‹è§’çš„è™šæ‹Ÿmarkerä¸­å¿ƒç‚¹
 	Point2f findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f pointRT);
 
-	//Ñ°ÕÒÒ»¸öµã¼¯ÖĞ¾àÀëÒ»ÌõÖ±Ïß×îÔ¶µÄµã
+	//å¯»æ‰¾ä¸€ä¸ªç‚¹é›†ä¸­è·ç¦»ä¸€æ¡ç›´çº¿æœ€è¿œçš„ç‚¹
 	Point2f findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2f linePointB);
 
-	//Á½µã¼ä¾àÀë¼ÆËã
+	//ä»é¢„å¤‡ Marker çš„é›†åˆé‡Œé¢æ‰¾å‡º çœŸÂ·Marker
+	vector<Marker> findMarkerReal(Marker* standbyMarker, int MarkerCnt);
+
+	//ä¸¤ç‚¹é—´è·ç¦»è®¡ç®—
 	inline float calcDistance(Point2f pointA, Point2f pointB)
 	{
 		float xDifference = pointA.x - pointB.x;
@@ -40,19 +48,19 @@ private:
 		return sqrt(xDifference * xDifference + yDifference * yDifference);
 	}
 
-	//¼ÆËãÁ½¸öÏòÁ¿µÄÏòÁ¿»ı
+	//è®¡ç®—ä¸¤ä¸ªå‘é‡çš„å‘é‡ç§¯
 	inline float calcCrossProduct(Point2f vectorA, Point2f vectorB)
 	{
 		return vectorA.x * vectorB.y - vectorA.y * vectorB.x;
 	}
 
-	//µãµ½Á½µãÈ·¶¨µÄÖ±ÏßµÄ¾àÀë
+	//ç‚¹åˆ°ä¸¤ç‚¹ç¡®å®šçš„ç›´çº¿çš„è·ç¦»
 	inline float distPointToLine(Point2f point, Point2f linePointA, Point2f linePointB)
 	{
 		float a, b, c;
 		float dist;
 
-		//¼ÆËãÖ±ÏßµÄÈı¸ö²ÎÊı
+		//è®¡ç®—ç›´çº¿çš„ä¸‰ä¸ªå‚æ•°
 		a = linePointA.y - linePointB.y;
 		b = linePointB.x - linePointA.x;
 		c = linePointA.x * linePointB.y - linePointB.x * linePointA.y;
@@ -62,21 +70,21 @@ private:
 	}
 
 private:
-	//¹ı³ÌÍ¼Ïñ¶¨Òå
+	//è¿‡ç¨‹å›¾åƒå®šä¹‰
 	Mat srcImage;
-	Mat processImage;
+	Mat preProcImage;
 	Mat debugImage;
-	Mat QRCodeROI;
+	Mat testImage;
 
-	//ÂÖÀª¶¨Òå
+	//è½®å»“å®šä¹‰
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
 	
-	//Ô¤±¸ Marker
-	Marker standbyMarker[STANDBY_MARKER_SIZE];
+	//é¢„å¤‡ Marker
+	Marker standbyMarker[STANDBY_MARKER_NUM];
 	int standbyMarkerCnt;
 
-	//¶¨Î»±ê¼Ç¼¯ºÏ¶¨Òå
+	//å®šä½æ ‡è®°é›†åˆå®šä¹‰
 	vector<Marker> markerSet;
 
 	//QRCode Marker
@@ -84,9 +92,12 @@ private:
 	Marker markerLeftBottom;
 	Marker markerRightTop;
 
-	//QRCode ¶¥µã
+	//QRCode é¡¶ç‚¹
 	Point2f cornerLeftTop;
 	Point2f cornerLeftBottom;
 	Point2f cornerRightTop;
+
+	//å®šä½åˆ°çš„ç›®æ ‡QRCode
+	QRCode dstQRCode;
 };
 #endif

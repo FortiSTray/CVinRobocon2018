@@ -11,29 +11,30 @@
 #include "opencv2\opencv.hpp"
 #include "CameraApi.h"
 #include "locator.h"
-#include "recognizer.h"
+#include "decoder.h"
 
 using namespace std;
 using namespace cv;
 
-UINT            m_threadID;		//Í¼Ïñ×¥È¡Ïß³ÌµÄID
-HANDLE          m_hDispThread;	//Í¼Ïñ×¥È¡Ïß³ÌµÄ¾ä±ú
-BOOL            m_bExit = FALSE;		//ÓÃÀ´Í¨ÖªÍ¼Ïñ×¥È¡Ïß³Ì½áÊø
-CameraHandle    m_hCamera;		//Ïà»ú¾ä±ú£¬¶à¸öÏà»úÍ¬Ê±Ê¹ÓÃÊ±£¬¿ÉÒÔÓÃÊı×é´úÌæ	
-BYTE*           m_pFrameBuffer; //ÓÃÓÚ½«Ô­Ê¼Í¼ÏñÊı¾İ×ª»»ÎªRGBµÄ»º³åÇø
-tSdkFrameHead   m_sFrInfo;		//ÓÃÓÚ±£´æµ±Ç°Í¼ÏñÖ¡µÄÖ¡Í·ĞÅÏ¢
+UINT            m_threadID;		//å›¾åƒæŠ“å–çº¿ç¨‹çš„ID
+HANDLE          m_hDispThread;	//å›¾åƒæŠ“å–çº¿ç¨‹çš„å¥æŸ„
+BOOL            m_bExit = FALSE;		//ç”¨æ¥é€šçŸ¥å›¾åƒæŠ“å–çº¿ç¨‹ç»“æŸ
+CameraHandle    m_hCamera;		//ç›¸æœºå¥æŸ„ï¼Œå¤šä¸ªç›¸æœºåŒæ—¶ä½¿ç”¨æ—¶ï¼Œå¯ä»¥ç”¨æ•°ç»„ä»£æ›¿	
+BYTE*           m_pFrameBuffer; //ç”¨äºå°†åŸå§‹å›¾åƒæ•°æ®è½¬æ¢ä¸ºRGBçš„ç¼“å†²åŒº
+tSdkFrameHead   m_sFrInfo;		//ç”¨äºä¿å­˜å½“å‰å›¾åƒå¸§çš„å¸§å¤´ä¿¡æ¯
 
-int	            m_iDispFrameNum;	//ÓÃÓÚ¼ÇÂ¼µ±Ç°ÒÑ¾­ÏÔÊ¾µÄÍ¼ÏñÖ¡µÄÊıÁ¿
-float           m_fDispFps;			//ÏÔÊ¾Ö¡ÂÊ
-float           m_fCapFps;			//²¶»ñÖ¡ÂÊ
+int	            m_iDispFrameNum;	//ç”¨äºè®°å½•å½“å‰å·²ç»æ˜¾ç¤ºçš„å›¾åƒå¸§çš„æ•°é‡
+float           m_fDispFps;			//æ˜¾ç¤ºå¸§ç‡
+float           m_fCapFps;			//æ•è·å¸§ç‡
 tSdkFrameStatistic  m_sFrameCount;
 tSdkFrameStatistic  m_sFrameLast;
 int					m_iTimeLast;
 char		    g_CameraName[64];
 
 Locator CrtLocator;
+Decoder CrtDecoder;
 
-/*Í¼Ïñ×¥È¡Ïß³Ì£¬Ö÷¶¯µ÷ÓÃSDK½Ó¿Úº¯Êı»ñÈ¡Í¼Ïñ*/
+/*å›¾åƒæŠ“å–çº¿ç¨‹ï¼Œä¸»åŠ¨è°ƒç”¨SDKæ¥å£å‡½æ•°è·å–å›¾åƒ*/
 UINT WINAPI uiDisplayThread(LPVOID lpParam)
 {
 	tSdkFrameHead 	sFrameInfo;
@@ -41,7 +42,7 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 	BYTE*			pbyBuffer;
 	CameraSdkStatus status;
 
-	//ÁÙÊ±±äÁ¿
+	//ä¸´æ—¶å˜é‡
 	int start = 0;
 
 	while (!m_bExit)
@@ -49,21 +50,21 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 
 		if (CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 		{
-			//½«»ñµÃµÄÔ­Ê¼Êı¾İ×ª»»³ÉRGB¸ñÊ½µÄÊı¾İ£¬Í¬Ê±¾­¹ıISPÄ£¿é£¬¶ÔÍ¼Ïñ½øĞĞ½µÔë£¬±ßÑØÌáÉı£¬ÑÕÉ«Ğ£ÕıµÈ´¦Àí¡£
-			//ÎÒ¹«Ë¾´ó²¿·ÖĞÍºÅµÄÏà»ú£¬Ô­Ê¼Êı¾İ¶¼ÊÇBayer¸ñÊ½µÄ
-			status = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);//Á¬ĞøÄ£Ê½
+			//å°†è·å¾—çš„åŸå§‹æ•°æ®è½¬æ¢æˆRGBæ ¼å¼çš„æ•°æ®ï¼ŒåŒæ—¶ç»è¿‡ISPæ¨¡å—ï¼Œå¯¹å›¾åƒè¿›è¡Œé™å™ªï¼Œè¾¹æ²¿æå‡ï¼Œé¢œè‰²æ ¡æ­£ç­‰å¤„ç†ã€‚
+			//æˆ‘å…¬å¸å¤§éƒ¨åˆ†å‹å·çš„ç›¸æœºï¼ŒåŸå§‹æ•°æ®éƒ½æ˜¯Bayeræ ¼å¼çš„
+			status = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);//è¿ç»­æ¨¡å¼
 
-																						 //·Ö±æÂÊ¸Ä±äÁË£¬ÔòË¢ĞÂ±³¾°
+																						 //åˆ†è¾¨ç‡æ”¹å˜äº†ï¼Œåˆ™åˆ·æ–°èƒŒæ™¯
 			if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
 			{
 				m_sFrInfo.iWidth = sFrameInfo.iWidth;
 				m_sFrInfo.iHeight = sFrameInfo.iHeight;
-				//Í¼Ïñ´óĞ¡¸Ä±ä£¬Í¨ÖªÖØ»æ
+				//å›¾åƒå¤§å°æ”¹å˜ï¼Œé€šçŸ¥é‡ç»˜
 			}
 
 			if (status == CAMERA_STATUS_SUCCESS)
 			{
-				////µ÷ÓÃSDK·â×°ºÃµÄÏÔÊ¾½Ó¿ÚÀ´ÏÔÊ¾Í¼Ïñ,ÄúÒ²¿ÉÒÔ½«m_pFrameBufferÖĞµÄRGBÊı¾İÍ¨¹ıÆäËû·½Ê½ÏÔÊ¾£¬±ÈÈçdirectX,OpengGL,µÈ·½Ê½¡£
+				////è°ƒç”¨SDKå°è£…å¥½çš„æ˜¾ç¤ºæ¥å£æ¥æ˜¾ç¤ºå›¾åƒ,æ‚¨ä¹Ÿå¯ä»¥å°†m_pFrameBufferä¸­çš„RGBæ•°æ®é€šè¿‡å…¶ä»–æ–¹å¼æ˜¾ç¤ºï¼Œæ¯”å¦‚directX,OpengGL,ç­‰æ–¹å¼ã€‚
 				//CameraImageOverlay(hCamera, m_pFrameBuffer, &sFrameInfo);
 
 				/*
@@ -75,10 +76,16 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
 				imshow("Original", srcImage);
 
+				QRCode dstQRCode;
+				dstQRCode = CrtLocator.locate(srcImage);
+				imshow("QRCode", dstQRCode.image);
 
-				Mat QRCodeImage;
-				QRCodeImage = CrtLocator.locate(srcImage);
-				imshow("QRCode", QRCodeImage);
+				int message = -1;
+				if (dstQRCode.lable == 1)
+				{
+					message = CrtDecoder.decode(dstQRCode.image);
+					//cout << message << endl;
+				}
 
 				int time = clock() - start;
 				cout << time << endl;
@@ -93,8 +100,8 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				m_iDispFrameNum++;
 			}
 
-			//ÔÚ³É¹¦µ÷ÓÃCameraGetImageBufferºó£¬±ØĞëµ÷ÓÃCameraReleaseImageBufferÀ´ÊÍ·Å»ñµÃµÄbuffer¡£
-			//·ñÔòÔÙ´Îµ÷ÓÃCameraGetImageBufferÊ±£¬³ÌĞò½«±»¹ÒÆğ£¬ÖªµÀÆäËûÏß³ÌÖĞµ÷ÓÃCameraReleaseImageBufferÀ´ÊÍ·ÅÁËbuffer
+			//åœ¨æˆåŠŸè°ƒç”¨CameraGetImageBufferåï¼Œå¿…é¡»è°ƒç”¨CameraReleaseImageBufferæ¥é‡Šæ”¾è·å¾—çš„bufferã€‚
+			//å¦åˆ™å†æ¬¡è°ƒç”¨CameraGetImageBufferæ—¶ï¼Œç¨‹åºå°†è¢«æŒ‚èµ·ï¼ŒçŸ¥é“å…¶ä»–çº¿ç¨‹ä¸­è°ƒç”¨CameraReleaseImageBufferæ¥é‡Šæ”¾äº†buffer
 			CameraReleaseImageBuffer(hCamera, pbyBuffer);
 
 			memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
@@ -118,8 +125,8 @@ int main(int argc, char* argv[])
 	CameraSdkStatus status;
 	tSdkCameraCapbility sCameraInfo;
 
-	//Ã¶¾ÙÉè±¸£¬»ñµÃÉè±¸ÁĞ±í
-	iCameraNums = 10;//µ÷ÓÃCameraEnumerateDeviceÇ°£¬ÏÈÉèÖÃiCameraNums = 10£¬±íÊ¾×î¶àÖ»¶ÁÈ¡10¸öÉè±¸£¬Èç¹ûĞèÒªÃ¶¾Ù¸ü¶àµÄÉè±¸£¬Çë¸ü¸ÄsCameraListÊı×éµÄ´óĞ¡ºÍiCameraNumsµÄÖµ
+	//æšä¸¾è®¾å¤‡ï¼Œè·å¾—è®¾å¤‡åˆ—è¡¨
+	iCameraNums = 10;//è°ƒç”¨CameraEnumerateDeviceå‰ï¼Œå…ˆè®¾ç½®iCameraNums = 10ï¼Œè¡¨ç¤ºæœ€å¤šåªè¯»å–10ä¸ªè®¾å¤‡ï¼Œå¦‚æœéœ€è¦æšä¸¾æ›´å¤šçš„è®¾å¤‡ï¼Œè¯·æ›´æ”¹sCameraListæ•°ç»„çš„å¤§å°å’ŒiCameraNumsçš„å€¼
 
 	if (CameraEnumerateDevice(sCameraList, &iCameraNums) != CAMERA_STATUS_SUCCESS || iCameraNums == 0)
 	{
@@ -127,7 +134,7 @@ int main(int argc, char* argv[])
 		return FALSE;
 	}
 
-	//¸ÃÊ¾ÀıÖĞ£¬ÎÒÃÇÖ»¼ÙÉèÁ¬½ÓÁËÒ»¸öÏà»ú¡£Òò´Ë£¬Ö»³õÊ¼»¯µÚÒ»¸öÏà»ú¡£(-1,-1)±íÊ¾¼ÓÔØÉÏ´ÎÍË³öÇ°±£´æµÄ²ÎÊı£¬Èç¹ûÊÇµÚÒ»´ÎÊ¹ÓÃ¸ÃÏà»ú£¬Ôò¼ÓÔØÄ¬ÈÏ²ÎÊı.
+	//è¯¥ç¤ºä¾‹ä¸­ï¼Œæˆ‘ä»¬åªå‡è®¾è¿æ¥äº†ä¸€ä¸ªç›¸æœºã€‚å› æ­¤ï¼Œåªåˆå§‹åŒ–ç¬¬ä¸€ä¸ªç›¸æœºã€‚(-1,-1)è¡¨ç¤ºåŠ è½½ä¸Šæ¬¡é€€å‡ºå‰ä¿å­˜çš„å‚æ•°ï¼Œå¦‚æœæ˜¯ç¬¬ä¸€æ¬¡ä½¿ç”¨è¯¥ç›¸æœºï¼Œåˆ™åŠ è½½é»˜è®¤å‚æ•°.
 	//In this demo ,we just init the first camera.
 	if ((status = CameraInit(&sCameraList[0], -1, -1, &m_hCamera)) != CAMERA_STATUS_SUCCESS)
 	{
@@ -140,7 +147,7 @@ int main(int argc, char* argv[])
 
 
 	//Get properties description for this camera.
-	CameraGetCapability(m_hCamera, &sCameraInfo);//"»ñµÃ¸ÃÏà»úµÄÌØĞÔÃèÊö"
+	CameraGetCapability(m_hCamera, &sCameraInfo);//"è·å¾—è¯¥ç›¸æœºçš„ç‰¹æ€§æè¿°"
 
 	m_pFrameBuffer = (BYTE *)CameraAlignMalloc(sCameraInfo.sResolutionRange.iWidthMax*sCameraInfo.sResolutionRange.iWidthMax * 3, 16);
 
@@ -152,18 +159,18 @@ int main(int argc, char* argv[])
 	strcpy_s(g_CameraName, sCameraList[0].acFriendlyName);
 
 	CameraCreateSettingPage(m_hCamera, NULL,
-		g_CameraName, NULL, NULL, 0);//"Í¨ÖªSDKÄÚ²¿½¨¸ÃÏà»úµÄÊôĞÔÒ³Ãæ";
+		g_CameraName, NULL, NULL, 0);//"é€šçŸ¥SDKå†…éƒ¨å»ºè¯¥ç›¸æœºçš„å±æ€§é¡µé¢";
 
-#ifdef USE_CALLBACK_GRAB_IMAGE //Èç¹ûÒªÊ¹ÓÃ»Øµ÷º¯Êı·½Ê½£¬¶¨ÒåUSE_CALLBACK_GRAB_IMAGEÕâ¸öºê
+#ifdef USE_CALLBACK_GRAB_IMAGE //å¦‚æœè¦ä½¿ç”¨å›è°ƒå‡½æ•°æ–¹å¼ï¼Œå®šä¹‰USE_CALLBACK_GRAB_IMAGEè¿™ä¸ªå®
 	//Set the callback for image capture
-	CameraSetCallbackFunction(m_hCamera, GrabImageCallback, 0, NULL);//"ÉèÖÃÍ¼Ïñ×¥È¡µÄ»Øµ÷º¯Êı";
+	CameraSetCallbackFunction(m_hCamera, GrabImageCallback, 0, NULL);//"è®¾ç½®å›¾åƒæŠ“å–çš„å›è°ƒå‡½æ•°";
 #else
 	m_hDispThread = (HANDLE)_beginthreadex(NULL, 0, &uiDisplayThread, (PVOID)m_hCamera, 0, &m_threadID);
 #endif
 
 	CameraPlay(m_hCamera);
 
-	CameraShowSettingPage(m_hCamera, TRUE);//TRUEÏÔÊ¾Ïà»úÅäÖÃ½çÃæ¡£FALSEÔòÒş²Ø¡£
+	CameraShowSettingPage(m_hCamera, TRUE);//TRUEæ˜¾ç¤ºç›¸æœºé…ç½®ç•Œé¢ã€‚FALSEåˆ™éšè—ã€‚
 
 	while (m_bExit != TRUE)
 	{

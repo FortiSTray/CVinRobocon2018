@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\decoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\recognizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp">
@@ -15,10 +15,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.h">
+    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\decoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\recognizer.h">
+    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.h">

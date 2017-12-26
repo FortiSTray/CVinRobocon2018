@@ -31,5 +31,5 @@ set_target_properties(${PROJ_NAME} PROPERTIES COMPILE_FLAGS "/MP")
 # Administrator
 #set_target_properties(${PROJ_NAME} PROPERTIES LINK_FLAGS "/level='requireAdministrator'") 
 
-# Unicode Encoder
+# Unicode±àÂë
 Add_Definitions(-DUNICODE -D_UNICODE)

@@ -9,43 +9,47 @@ Locator::~Locator(void)
 	markerSet.erase(markerSet.begin(), markerSet.end());
 }
 
-Mat Locator::locate(Mat &img)
+QRCode Locator::locate(Mat &img)
 {
-	//±äÁ¿ & ¶ÔÏó¶¨Òå¼°³õÊ¼»¯
+	//å˜é‡ & å¯¹è±¡å®šä¹‰åŠåˆå§‹åŒ–
 	markerSet.erase(markerSet.begin(), markerSet.end());
 	srcImage = img.clone();
 	debugImage = img.clone();
 
-	//Í¼Ïñ³õ²½´¦Àí
-	cvtColor(srcImage, processImage, COLOR_BGR2GRAY);
-	//medianBlur(processImage, processImage, 3);
-	Canny(processImage, processImage, 100, 200, 3);
-	//threshold(processImage, processImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-	//adaptiveThreshold(processImage, processImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
-	imshow("After Process", processImage);
+	//å›¾åƒé¢„å¤„ç†
+	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
+	//Canny(preProcImage, testImage, 100, 200, 3);
+	//imshow("Canny1", testImage);
+	//equalizeHist(preProcImage, preProcImage);
+	//medianBlur(preProcImage, preProcImage, 3);
+	//imshow("equa", preProcImage);
+	Canny(preProcImage, preProcImage, 100, 200, 3);
+	//threshold(preProcImage, preProcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+	//adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
+	imshow("After Process", preProcImage);
 
-	//Ñ°ÕÒÂÖÀª£¬²¢´æ´¢ÂÖÀªµÄ²ã´ÎĞÅÏ¢
-	findContours(processImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
+	//å¯»æ‰¾è½®å»“ï¼Œå¹¶å­˜å‚¨è½®å»“çš„å±‚æ¬¡ä¿¡æ¯
+	findContours(preProcImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
 
-	//±éÀúÂÖÀª
+	//éå†è½®å»“
 	standbyMarkerCnt = 0;
 
 	for (size_t i = 0; i < contours.size(); i++)
 	{
-		//ÌŞ³ıÂÖÀªÃæ»ı¹ıĞ¡µÄÂÖÀª
+		//å‰”é™¤è½®å»“é¢ç§¯è¿‡å°çš„è½®å»“
 		float area = static_cast<float>(contourArea(contours[i]));
 		if (area < 100) { continue; }
 
-		//ÌŞ³ı¾ØĞÎ³¤¿í±È²»·ûÒÔ¼°±ß³¤¹ı³¤µÄÂÖÀª
+		//å‰”é™¤çŸ©å½¢é•¿å®½æ¯”ä¸ç¬¦ä»¥åŠè¾¹é•¿è¿‡é•¿çš„è½®å»“
 		RotatedRect rect = minAreaRect(contours[i]);
 		float rectWidth = rect.size.width;
 		float rectHeight = rect.size.height;
 		float ratio = min(rectWidth, rectHeight) / max(rectWidth, rectHeight);
 
 		if (ratio < 0.85) { continue; }
-		if (rectWidth > processImage.cols / 4 || rectHeight > processImage.rows / 4) { continue; }
+		if (rectWidth > preProcImage.cols / 4 || rectHeight > preProcImage.rows / 4) { continue; }
 
-		//Í³¼ÆÂÖÀª²ã´Î
+		//ç»Ÿè®¡è½®å»“å±‚æ¬¡
 		int num = i;
 		int layerCounter = 0;
 
@@ -57,38 +61,39 @@ Mat Locator::locate(Mat &img)
 			{
 				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
 				standbyMarker[standbyMarkerCnt++] = rect;
+				cout << standbyMarkerCnt << "  " << rect.size.width << "  " << rect.angle  << endl;
 
 				break;
 			}
 		}
 
-		//Èç¹ûÔ¤±¸ Marker Êı×éÌîÂúÔòÌø³ö
-		if (standbyMarkerCnt >= STANDBY_MARKER_SIZE)
+		//å¦‚æœé¢„å¤‡ Marker æ•°ç»„å¡«æ»¡åˆ™è·³å‡º
+		if (standbyMarkerCnt >= STANDBY_MARKER_NUM)
 		{
 			break;
 		}
 	}
 
-	for (int i = 0; i < standbyMarkerCnt; i++)
+	if (standbyMarkerCnt >= 3)
 	{
-		markerSet.push_back(standbyMarker[i]);
+		markerSet = findMarkerReal(standbyMarker, standbyMarkerCnt);
 	}
 
 	getQRCode(markerSet);
 	imshow("Debug", debugImage);
 
-	return QRCodeROI;
+	return dstQRCode;
 }
 
-//´ÓÈı¸ömarkerµÄĞÅÏ¢ÖĞ»ñÈ¡QRCode
-void Locator::getQRCode(vector<Marker> &markerSet)
+//ä»ä¸‰ä¸ªmarkerçš„ä¿¡æ¯ä¸­è·å–QRCode
+void Locator::getQRCode(vector<Marker> &mkrSet)
 {
-	if (markerSet.size() == (size_t)3)
+	if (mkrSet.size() == (size_t)3)
 	{
-		//Èı¸ö Marker ÖĞĞÄµãÁ½Á½¼ÆËã¾àÀë
-		float distanceAB = calcDistance(markerSet[0].center, markerSet[1].center);
-		float distanceBC = calcDistance(markerSet[1].center, markerSet[2].center);
-		float distanceAC = calcDistance(markerSet[0].center, markerSet[2].center);
+		//ä¸‰ä¸ª Marker ä¸­å¿ƒç‚¹ä¸¤ä¸¤è®¡ç®—è·ç¦»
+		float distanceAB = calcDistance(mkrSet[0].center, mkrSet[1].center);
+		float distanceBC = calcDistance(mkrSet[1].center, mkrSet[2].center);
+		float distanceAC = calcDistance(mkrSet[0].center, mkrSet[2].center);
 
 		Marker tempMarkerA;
 		Marker tempMarkerB;
@@ -96,44 +101,44 @@ void Locator::getQRCode(vector<Marker> &markerSet)
 		Point2f vectorA;
 		Point2f vectorB;
 
-		//QRCode ËÄ¸öMarkerÖĞĞÄµã
+		//QRCode å››ä¸ªMarkerä¸­å¿ƒç‚¹
 		Point2f pointLeftTop;
 		Point2f pointLeftBottom;
 		Point2f pointRightTop;
 		Point2f pointVirtual;
 
-		//ÁÙÊ±´æ´¢ Marker µÄËÄ¸ö½Ç
+		//ä¸´æ—¶å­˜å‚¨ Marker çš„å››ä¸ªè§’
 		Point2f markerCorners[4];
 
-		//·ÂÉä±ä»»µÄÔ´¶¥µãºÍÄ¿±ê¶¥µã
+		//ä»¿å°„å˜æ¢çš„æºé¡¶ç‚¹å’Œç›®æ ‡é¡¶ç‚¹
 		Point2f srcCorner[3];
 		Point2f dstCorner[3];
 
-		//ÕÒ³ö×óÉÏ¶¥µãµÄ Marker
+		//æ‰¾å‡ºå·¦ä¸Šé¡¶ç‚¹çš„ Marker
 		if (distanceAB > distanceBC && distanceAB > distanceAC)
 		{
-			markerLeftTop = markerSet[2];
+			markerLeftTop = mkrSet[2];
 
-			tempMarkerA = markerSet[0];
-			tempMarkerB = markerSet[1];
+			tempMarkerA = mkrSet[0];
+			tempMarkerB = mkrSet[1];
 		}
 		else if (distanceBC > distanceAB && distanceBC > distanceAC)
 		{
-			markerLeftTop = markerSet[0];
+			markerLeftTop = mkrSet[0];
 
-			tempMarkerA = markerSet[1];
-			tempMarkerB = markerSet[2];
+			tempMarkerA = mkrSet[1];
+			tempMarkerB = mkrSet[2];
 		}
 		else if (distanceAC > distanceAB && distanceAC > distanceBC)
 		{
-			markerLeftTop = markerSet[1];
+			markerLeftTop = mkrSet[1];
 
-			tempMarkerA = markerSet[0];
-			tempMarkerB = markerSet[2];
+			tempMarkerA = mkrSet[0];
+			tempMarkerB = mkrSet[2];
 		}
 		else {}
 
-		//ÕÒ³ö×óÏÂºÍÓÒÉÏµÄ Marker
+		//æ‰¾å‡ºå·¦ä¸‹å’Œå³ä¸Šçš„ Marker
 		vectorA.x = tempMarkerA.center.x - markerLeftTop.center.x;
 		vectorA.y = tempMarkerA.center.y - markerLeftTop.center.y;
 		vectorB.x = tempMarkerB.center.x - markerLeftTop.center.x;
@@ -150,13 +155,13 @@ void Locator::getQRCode(vector<Marker> &markerSet)
 			markerRightTop = tempMarkerB;
 		}
 
-		//ÕÒ³öËÄ¸ö Marker ÖĞĞÄµã
+		//æ‰¾å‡ºå››ä¸ª Marker ä¸­å¿ƒç‚¹
 		pointLeftTop = markerLeftTop.center;
 		pointLeftBottom = markerLeftBottom.center;
 		pointRightTop = markerRightTop.center;
 		pointVirtual = findPointVirtual(pointLeftTop, pointLeftBottom, pointRightTop);
 
-		//ÕÒ³ö¶şÎ¬ÂëµÄÈı¸ö½Ç
+		//æ‰¾å‡ºäºŒç»´ç çš„ä¸‰ä¸ªè§’
 		markerLeftTop.points(markerCorners);
 		cornerLeftTop = findFarthestPoint(markerCorners, pointLeftBottom, pointRightTop);
 
@@ -171,27 +176,31 @@ void Locator::getQRCode(vector<Marker> &markerSet)
 		circle(debugImage, cornerLeftBottom, 3, Scalar(0, 255, 0), 2);
 		circle(debugImage, cornerRightTop,   3, Scalar(0, 0, 255), 2);
 
-		//Îª·ÂÉä±ä»»µÄÔ´¶¥µãºÍÄ¿±ê¶¥µã¸³Öµ
+		//ä¸ºä»¿å°„å˜æ¢çš„æºé¡¶ç‚¹å’Œç›®æ ‡é¡¶ç‚¹èµ‹å€¼
 		srcCorner[0] = cornerLeftTop;
 		srcCorner[1] = cornerLeftBottom;
 		srcCorner[2] = cornerRightTop;
 
 		dstCorner[0] = Point(0, 0);
-		dstCorner[1] = Point(0, 49);
-		dstCorner[2] = Point(49, 0);
+		dstCorner[1] = Point(0, REGULAR_QRCODE_SIDE - 1);
+		dstCorner[2] = Point(REGULAR_QRCODE_SIDE - 1, 0);
 
-		//·ÂÉä±ä»»
+		//ä»¿å°„å˜æ¢
 		Mat affineMatrix;
 		affineMatrix = getAffineTransform(srcCorner, dstCorner);
-		warpAffine(srcImage, QRCodeROI, affineMatrix, Size(50, 50));
+		warpAffine(srcImage, dstQRCode.image, affineMatrix, Size(REGULAR_QRCODE_SIDE, REGULAR_QRCODE_SIDE));
+
+		//QRCodeçš„lableèµ‹å€¼ä¸º1è¡¨ç¤ºæ‰¾åˆ°QRCode
+		dstQRCode.lable = 1;
 	}
 	else
 	{
-		QRCodeROI = Mat(50, 50, CV_8UC3, Scalar(0, 0, 0));
+		dstQRCode.image = Mat(REGULAR_QRCODE_SIDE, REGULAR_QRCODE_SIDE, CV_8UC3, Scalar(0, 0, 0));
+		dstQRCode.lable = 0;
 	}
 }
 
-//Ñ°ÕÒÓÒÏÂ½ÇµÄĞéÄâ Marker ÖĞĞÄµã
+//å¯»æ‰¾å³ä¸‹è§’çš„è™šæ‹Ÿ Marker ä¸­å¿ƒç‚¹
 Point2f Locator::findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f pointRT)
 {
 	Point2f vectorA;
@@ -213,7 +222,7 @@ Point2f Locator::findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f poin
 	return pointVirtual;
 }
 
-//Ñ°ÕÒÒ»¸öµã¼¯ÖĞ¾àÀëÒ»ÌõÖ±Ïß×îÔ¶µÄµã
+//å¯»æ‰¾ä¸€ä¸ªç‚¹é›†ä¸­è·ç¦»ä¸€æ¡ç›´çº¿æœ€è¿œçš„ç‚¹
 Point2f Locator::findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2f linePointB)
 {
 	float tempDist = 0.0f;
@@ -231,4 +240,114 @@ Point2f Locator::findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2
 	}
 
 	return farthestPoint;
+}
+
+//ä»é¢„å¤‡ Marker çš„é›†åˆé‡Œé¢æ‰¾å‡º çœŸÂ·Marker
+vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
+{
+	Marker tempMarker;
+	
+	int serialNumByWidth[10];
+	int widthCnt = 0;
+
+	int serialNumByAngle[10];
+	int angleCnt = 0;
+	bool angleScanDoneFlag = 0;
+	
+	vector<Marker> markerReal;
+
+	//æ ¹æ® width åˆ¤æ–­ Marker
+	for (int i = 0; i < MarkerCnt; i++)
+	{
+		for (int j = i + 1; j < MarkerCnt; j++)
+		{
+			if (standbyMarker[i].size.width > standbyMarker[j].size.width)
+			{
+				tempMarker       = standbyMarker[i];
+				standbyMarker[i] = standbyMarker[j];
+				standbyMarker[j] = tempMarker      ;
+			}
+		}
+	}
+
+	for (int i = 0; i < MarkerCnt - 1; i++)
+	{
+		widthCnt = 0;
+
+		while (standbyMarker[i + 1].size.width - standbyMarker[i].size.width < 5.0f)
+		{
+			serialNumByWidth[widthCnt++] = i++;
+			if (i == MarkerCnt - 1) { break; }
+		}
+		serialNumByWidth[widthCnt++] = i;
+
+		if (widthCnt >= 3) { break; }
+	}
+
+	if (widthCnt < 3)
+	{
+		markerReal.erase(markerReal.begin(), markerReal.end());
+		return markerReal;
+	}
+
+	//è·Ÿæ® angle åˆ¤æ–­ Marker
+	for (int i = 0; i < MarkerCnt; i++)
+	{
+		for (int j = i + 1; j < MarkerCnt; j++)
+		{
+			if (standbyMarker[i].angle > standbyMarker[j].angle)
+			{
+				tempMarker       = standbyMarker[i];
+				standbyMarker[i] = standbyMarker[j];
+				standbyMarker[j] = tempMarker      ;
+			}
+		}
+	}
+
+	for (int i = 0; i < MarkerCnt - 1; i++)
+	{
+		angleCnt = 0;
+		
+		while (standbyMarker[i + 1].angle - standbyMarker[i].angle < 5.0f)
+		{
+			serialNumByAngle[angleCnt++] = i++;
+			if (angleCnt == MarkerCnt - 1) { break; }
+
+			if (i == MarkerCnt - 1)
+			{
+				angleScanDoneFlag = 1;
+				if (standbyMarker[0].angle - standbyMarker[MarkerCnt - 1].angle + 90.0f < 5.0f)
+				{
+					serialNumByAngle[angleCnt++] = MarkerCnt - 1;
+					i = 0;
+					if (angleCnt == MarkerCnt - 1) { break; }
+				}
+			}
+		}
+		serialNumByAngle[angleCnt++] = i;
+
+		if (angleCnt >= 3 || angleScanDoneFlag == 1) { break; }
+	}
+
+	if (angleCnt < 3)
+	{
+		markerReal.erase(markerReal.begin(), markerReal.end());
+		return markerReal;
+	}
+
+	//å¯»æ‰¾ width å’Œ angle çš„åŒ¹é…
+	for (int i = 0; i < widthCnt; i++)
+	{
+		for (int j = 0; j < angleCnt; j++)
+		{
+			if (serialNumByWidth[i] == serialNumByAngle[j])
+			{
+				markerReal.push_back(standbyMarker[serialNumByWidth[i]]);
+				if (markerReal.size() == 3) { return markerReal; }
+			}
+		}
+	}
+
+	markerReal.erase(markerReal.begin(), markerReal.end());
+	return markerReal;
 }
