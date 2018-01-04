@@ -11,22 +11,46 @@ Locator::~Locator(void)
 
 QRCode Locator::locate(Mat &img)
 {
+	char fileName[32];
+	static int fileSerial = 0;
+
 	//变量 & 对象定义及初始化
 	markerSet.erase(markerSet.begin(), markerSet.end());
 	srcImage = img.clone();
 	debugImage = img.clone();
 
 	//图像预处理
-	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
+	//cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
 	//Canny(preProcImage, testImage, 100, 200, 3);
 	//imshow("Canny1", testImage);
 	//equalizeHist(preProcImage, preProcImage);
 	//medianBlur(preProcImage, preProcImage, 3);
 	//imshow("equa", preProcImage);
-	Canny(preProcImage, preProcImage, 100, 200, 3);
+	//Canny(preProcImage, preProcImage, 100, 200, 3);
 	//threshold(preProcImage, preProcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
 	//adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
+
+	cvtColor(srcImage, srcImage, COLOR_BGR2GRAY);
+	srcImage.convertTo(srcImage, CV_32FC1, 1.0 / 255.0);
+	CalcBlockMeanVariance(srcImage, preProcImage);
+	preProcImage = 1.0 - preProcImage;
+	preProcImage = srcImage + preProcImage;
+	imshow("Img", srcImage);
+	cv::threshold(preProcImage, preProcImage, 0.85, 255, cv::THRESH_BINARY);
+	//preProcImage.convertTo(preProcImage, CV_8UC1);
+
+	if (waitKey(2) == ' ')
+	{
+		sprintf(fileName, "./dataProc/data%d.jpg", fileSerial++);
+		if (fileSerial >= 99) { fileSerial--; }
+		imwrite(fileName, preProcImage);
+	}
+
 	imshow("After Process", preProcImage);
+
+	dstQRCode.image = Mat(REGULAR_QRCODE_SIDE, REGULAR_QRCODE_SIDE, CV_8UC3, Scalar(0, 0, 0));
+	dstQRCode.lable = 0;
+	return dstQRCode;
 
 	//寻找轮廓，并存储轮廓的层次信息
 	findContours(preProcImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
@@ -57,11 +81,11 @@ QRCode Locator::locate(Mat &img)
 		{
 			num = hierarchy[num][2];
 			layerCounter = layerCounter + 1;
-			if (layerCounter >= 5)
+			if (layerCounter >= /*5*/2)
 			{
 				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
 				standbyMarker[standbyMarkerCnt++] = rect;
-				cout << standbyMarkerCnt << "  " << rect.size.width << "  " << rect.angle  << endl;
+				//cout << standbyMarkerCnt << "  " << rect.size.width << "  " << rect.angle  << endl;
 
 				break;
 			}
@@ -356,4 +380,47 @@ vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
 
 	markerReal.erase(markerReal.begin(), markerReal.end());
 	return markerReal;
+}
+
+//计算块均值方差
+void Locator::CalcBlockMeanVariance(Mat& Img, Mat& Res, float blockSide) // blockSide - the parameter (set greater for larger font on image)
+{
+	Mat I;
+	Img.convertTo(I, CV_32FC1);
+	Res = Mat::zeros(Img.rows / blockSide, Img.cols / blockSide, CV_32FC1);
+	Mat inpaintmask;
+	Mat patch;
+	Mat smallImg;
+	Scalar m, s;
+
+	for (int i = 0; i<Img.rows - blockSide; i += blockSide)
+	{
+		for (int j = 0; j<Img.cols - blockSide; j += blockSide)
+		{
+			patch = I(Range(i, i + blockSide + 1), Range(j, j + blockSide + 1));
+			cv::meanStdDev(patch, m, s);
+			if (s[0]>0.01) // Thresholding parameter (set smaller for lower contrast image)
+			{
+				Res.at<float>(i / blockSide, j / blockSide) = m[0];
+			}
+			else
+			{
+				Res.at<float>(i / blockSide, j / blockSide) = 0;
+			}
+		}
+	}
+
+	cv::resize(I, smallImg, Res.size());
+
+	cv::threshold(Res, inpaintmask, 0.02, 1.0, cv::THRESH_BINARY);
+
+	Mat inpainted;
+	smallImg.convertTo(smallImg, CV_8UC1, 255);
+
+	inpaintmask.convertTo(inpaintmask, CV_8UC1);
+	imshow("temp1", smallImg);
+	inpaint(smallImg, inpaintmask, inpainted, 5, INPAINT_TELEA);
+	imshow("tmp2", inpainted);
+	cv::resize(inpainted, Res, Img.size());
+	Res.convertTo(Res, CV_32FC1, 1.0 / 255.0);
 }

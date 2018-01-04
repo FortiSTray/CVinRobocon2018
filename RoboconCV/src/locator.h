@@ -40,6 +40,8 @@ private:
 	//从预备 Marker 的集合里面找出 真·Marker
 	vector<Marker> findMarkerReal(Marker* standbyMarker, int MarkerCnt);
 
+	void CalcBlockMeanVariance(Mat& Img, Mat& Res, float blockSide = 21);
+
 	//两点间距离计算
 	inline float calcDistance(Point2f pointA, Point2f pointB)
 	{

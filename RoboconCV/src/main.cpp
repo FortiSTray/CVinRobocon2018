@@ -34,6 +34,9 @@ char		    g_CameraName[64];
 Locator CrtLocator;
 Decoder CrtDecoder;
 
+//char fileName[32];
+//int fileSerial = 0;
+
 /*图像抓取线程，主动调用SDK接口函数获取图像*/
 UINT WINAPI uiDisplayThread(LPVOID lpParam)
 {
@@ -76,6 +79,13 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
 				imshow("Original", srcImage);
 
+				/*if (waitKey(2) == ' ')
+				{
+					sprintf(fileName, "./data/data%d.jpg", fileSerial++);
+					if (fileSerial >= 99) { fileSerial--; }
+					imwrite(fileName, srcImage);
+				}*/
+
 				QRCode dstQRCode;
 				dstQRCode = CrtLocator.locate(srcImage);
 				imshow("QRCode", dstQRCode.image);
@@ -84,11 +94,15 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				if (dstQRCode.lable == 1)
 				{
 					message = CrtDecoder.decode(dstQRCode.image);
-					//cout << message << endl;
+					cout << message << endl;
+				}
+				else
+				{
+					cout << message << endl;
 				}
 
 				int time = clock() - start;
-				cout << time << endl;
+				//cout << time << endl;
 				start = clock();
 				
 				/*
