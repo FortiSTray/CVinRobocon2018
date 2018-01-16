@@ -11,9 +11,6 @@ Locator::~Locator(void)
 
 Signal Locator::locate(Mat &img)
 {
-	char fileName[32];
-	static int fileSerial = 0;
-
 	//变量 & 对象定义及初始化
 	markerPair.erase(markerPair.begin(), markerPair.end());
 	srcImage = img.clone();
@@ -31,8 +28,7 @@ Signal Locator::locate(Mat &img)
 	imshow("After Process", preProcImage);
 
 	dstSignal.image = Mat(REGULAR_SIGNAL_HEIGHT, REGULAR_SIGNAL_WIDTH, CV_8UC3, Scalar(0, 0, 0));
-	dstSignal.lable = 0;
-	//return dstSignal;
+	dstSignal.lable = false;
 
 	//寻找轮廓，并存储轮廓的层次信息
 	findContours(preProcImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
@@ -57,8 +53,11 @@ Signal Locator::locate(Mat &img)
 
 			if (layerCounter == /*5*/2)
 			{
-				//检查此层级轮廓数量是否 >= 2
+				//检查此层级轮廓数量是否 == 2
 				if (hierarchy[num][0] == -1) { continue; }
+				
+				num = hierarchy[num][0];
+				if (hierarchy[num][0] != -1) { continue; }
 
 				//多边形拟合找出四边形的轮廓
 				vector<Point> vertex;
@@ -67,6 +66,7 @@ Signal Locator::locate(Mat &img)
 
 				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
 
+				//根据Marker的重心判断上下左右四个定点，并按顺序存入Possible Marker
 				Point crtGravityCenter = calcGravityCenter(vertex);
 				for (auto crtVertex : vertex)
 				{
@@ -99,17 +99,14 @@ Signal Locator::locate(Mat &img)
 			}
 		}
 
-		//如果预备 Marker 数组填满则跳出
+		//如果用于存储Possible Marker的数组填满则跳出
 		if (psbMarkerCnt >= POSSIBLE_MARKER_NUM)
 		{
 			break;
 		}
 	}
 
-	if (psbMarkerCnt >= 2)
-	{
-		markerPair = findMarkerPair(psbMarker, psbMarkerCnt);
-	}
+	markerPair = findMarkerPair(psbMarker, psbMarkerCnt);
 
 	dstSignal = getSignal(markerPair);
 
@@ -118,7 +115,7 @@ Signal Locator::locate(Mat &img)
 	return dstSignal;
 }
 
-//从可能的 Marker 里面找出最终的 Marker 对
+//从可能的Marker里面找出最终的Marker对
 vector<Marker> Locator::findMarkerPair(Marker* psbMarker, int MarkerCnt)
 {
 	vector<Marker> markerPair;
@@ -145,7 +142,7 @@ Signal Locator::getSignal(vector<Marker> markerPair)
 	//要找的目标Signal
 	Signal crtSignal;
 	crtSignal.image = Mat(REGULAR_SIGNAL_HEIGHT, REGULAR_SIGNAL_WIDTH, CV_8UC3, Scalar(0, 0, 0));
-	crtSignal.lable = 0;
+	crtSignal.lable = false;
 
 	//左Marker和右Marker
 	Marker markerLeft;
@@ -188,7 +185,7 @@ Signal Locator::getSignal(vector<Marker> markerPair)
 		cv::Mat transMatrix = cv::getPerspectiveTransform(srcCorner, dstCorner);
 		cv::warpPerspective(srcImage, crtSignal.image, transMatrix, crtSignal.image.size());
 
-		crtSignal.lable = 1;
+		crtSignal.lable = true;
 	}
 
 	return crtSignal;

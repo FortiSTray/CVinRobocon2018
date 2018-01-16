@@ -91,7 +91,7 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				}
 
 				int message = -1;
-				if (dstSignal.lable == 1)
+				if (dstSignal.lable == true)
 				{
 					message = CrtDecoder.decode(dstSignal.image);
 					//cout << message << endl;
