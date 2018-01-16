@@ -1,39 +1,39 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\decoder.cpp">
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\decoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.cpp">
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\locator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\main.cpp">
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp">
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\decoder.h">
+    <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\decoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\locator.h">
+    <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\locator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.h">
+    <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt" />
+    <CustomBuild Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{B00364D6-76B5-3D5E-A898-9AE35925F20D}</UniqueIdentifier>
+      <UniqueIdentifier>{D1986312-D81C-3F4C-BADE-6462D9755C4C}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{12E36502-6AA0-345C-9C37-71B61488DBB3}</UniqueIdentifier>
+      <UniqueIdentifier>{39E475F0-6454-3E6D-B81F-C18C3DC20EE7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

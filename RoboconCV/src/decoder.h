@@ -7,20 +7,26 @@
 using namespace std;
 using namespace cv;
 
-//宏定义四个信号块的尺寸和位置
-#define SIGNAL_SIZE 10
+//宏定义六个信息的尺寸和位置
+#define MESSAGE_SIZE 7
 
-#define SIGNAL_UP_X 20
-#define SIGNAL_UP_Y 8
+#define MESSAGE_LU_X 16
+#define MESSAGE_LU_Y 0
 
-#define SIGNAL_RIGHT_X 32
-#define SIGNAL_RIGHT_Y 20
+#define MESSAGE_MU_X 34
+#define MESSAGE_MU_Y 0
 
-#define SIGNAL_DOWN_X 20
-#define SIGNAL_DOWN_Y 32
+#define MESSAGE_RU_X 52
+#define MESSAGE_RU_Y 0
 
-#define SIGNAL_LEFT_X 8
-#define SIGNAL_LEFT_Y 20
+#define MESSAGE_LD_X 16
+#define MESSAGE_LD_Y 14
+
+#define MESSAGE_MD_X 34
+#define MESSAGE_MD_Y 14
+
+#define MESSAGE_RD_X 52
+#define MESSAGE_RD_Y 14
 
 class Decoder
 {
@@ -28,15 +34,17 @@ public:
 	Decoder(void);
 	~Decoder(void);
 
-	int decode(Mat &img);
+	int decode(Mat& img);
 
 private:
 	Mat srcImage;
 	Mat preProcImage;
 
-	bool signalUpStatus;
-	bool signalRightStatus;
-	bool signalDownStatus;
-	bool signalLeftStatus;
+	bool messageLUStatus;
+	bool messageMUStatus;
+	bool messageRUStatus;
+	bool messageLDStatus;
+	bool messageMDStatus;
+	bool messageRDStatus;
 };
 #endif

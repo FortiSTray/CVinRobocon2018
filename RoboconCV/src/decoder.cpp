@@ -11,7 +11,7 @@ Decoder::~Decoder(void)
 
 }
 
-int Decoder::decode(Mat &img)
+int Decoder::decode(Mat& img)
 {
 	int grayscale;
 	int pixNum;
@@ -21,12 +21,12 @@ int Decoder::decode(Mat &img)
 	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
 	threshold(preProcImage, preProcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
 	
-	//上信号块
+	//左上信息块
 	grayscale = 0;
 	pixNum = 0;
-	for (int i = SIGNAL_UP_Y; i < SIGNAL_UP_Y + SIGNAL_SIZE; i += 3)
+	for (int i = MESSAGE_LU_Y; i < MESSAGE_LU_Y + MESSAGE_SIZE; i += 3)
 	{
-		for (int j = SIGNAL_UP_X; j < SIGNAL_UP_X + SIGNAL_SIZE; j += 3)
+		for (int j = MESSAGE_LU_X; j < MESSAGE_LU_X + MESSAGE_SIZE; j += 3)
 		{
 			grayscale += preProcImage.ptr<uchar>(i)[j];
 			pixNum++;
@@ -35,19 +35,19 @@ int Decoder::decode(Mat &img)
 	grayscale /= pixNum;
 	if (grayscale < 128)
 	{
-		signalUpStatus = 1;
+		messageLUStatus = 1;
 	}
 	else
 	{
-		signalUpStatus = 0;
+		messageLUStatus = 0;
 	}
 
-	//右信号块
+	//中上信息块
 	grayscale = 0;
 	pixNum = 0;
-	for (int i = SIGNAL_RIGHT_Y; i < SIGNAL_RIGHT_Y + SIGNAL_SIZE; i += 3)
+	for (int i = MESSAGE_MU_Y; i < MESSAGE_MU_Y + MESSAGE_SIZE; i += 3)
 	{
-		for (int j = SIGNAL_RIGHT_X; j < SIGNAL_RIGHT_X + SIGNAL_SIZE; j += 3)
+		for (int j = MESSAGE_MU_X; j < MESSAGE_MU_X + MESSAGE_SIZE; j += 3)
 		{
 			grayscale += preProcImage.ptr<uchar>(i)[j];
 			pixNum++;
@@ -56,19 +56,19 @@ int Decoder::decode(Mat &img)
 	grayscale /= pixNum;
 	if (grayscale < 128)
 	{
-		signalRightStatus = 1;
+		messageMUStatus = 1;
 	}
 	else
 	{
-		signalRightStatus = 0;
+		messageMUStatus = 0;
 	}
 
-	//下信号块
+	//右上信息块
 	grayscale = 0;
 	pixNum = 0;
-	for (int i = SIGNAL_DOWN_Y; i < SIGNAL_DOWN_Y + SIGNAL_SIZE; i += 3)
+	for (int i = MESSAGE_RU_Y; i < MESSAGE_RU_Y + MESSAGE_SIZE; i += 3)
 	{
-		for (int j = SIGNAL_DOWN_X; j < SIGNAL_DOWN_X + SIGNAL_SIZE; j += 3)
+		for (int j = MESSAGE_RU_X; j < MESSAGE_RU_X + MESSAGE_SIZE; j += 3)
 		{
 			grayscale += preProcImage.ptr<uchar>(i)[j];
 			pixNum++;
@@ -77,19 +77,19 @@ int Decoder::decode(Mat &img)
 	grayscale /= pixNum;
 	if (grayscale < 128)
 	{
-		signalDownStatus = 1;
+		messageRUStatus = 1;
 	}
 	else
 	{
-		signalDownStatus = 0;
+		messageRUStatus = 0;
 	}
 
-	//左信号块
+	//左下信息块
 	grayscale = 0;
 	pixNum = 0;
-	for (int i = SIGNAL_LEFT_Y; i < SIGNAL_LEFT_Y + SIGNAL_SIZE; i += 3)
+	for (int i = MESSAGE_LD_Y; i < MESSAGE_LD_Y + MESSAGE_SIZE; i += 3)
 	{
-		for (int j = SIGNAL_LEFT_X; j < SIGNAL_LEFT_X + SIGNAL_SIZE; j += 3)
+		for (int j = MESSAGE_LD_X; j < MESSAGE_LD_X + MESSAGE_SIZE; j += 3)
 		{
 			grayscale += preProcImage.ptr<uchar>(i)[j];
 			pixNum++;
@@ -98,52 +98,58 @@ int Decoder::decode(Mat &img)
 	grayscale /= pixNum;
 	if (grayscale < 128)
 	{
-		signalLeftStatus = 1;
+		messageLDStatus = 1;
 	}
 	else
 	{
-		signalLeftStatus = 0;
+		messageLDStatus = 0;
+	}
+
+	//中下信息块
+	grayscale = 0;
+	pixNum = 0;
+	for (int i = MESSAGE_MD_Y; i < MESSAGE_MD_Y + MESSAGE_SIZE; i += 3)
+	{
+		for (int j = MESSAGE_MD_X; j < MESSAGE_MD_X + MESSAGE_SIZE; j += 3)
+		{
+			grayscale += preProcImage.ptr<uchar>(i)[j];
+			pixNum++;
+		}
+	}
+	grayscale /= pixNum;
+	if (grayscale < 128)
+	{
+		messageMDStatus = 1;
+	}
+	else
+	{
+		messageMDStatus = 0;
+	}
+
+	//右下信息块
+	grayscale = 0;
+	pixNum = 0;
+	for (int i = MESSAGE_RD_Y; i < MESSAGE_RD_Y + MESSAGE_SIZE; i += 3)
+	{
+		for (int j = MESSAGE_RD_X; j < MESSAGE_RD_X + MESSAGE_SIZE; j += 3)
+		{
+			grayscale += preProcImage.ptr<uchar>(i)[j];
+			pixNum++;
+		}
+	}
+	grayscale /= pixNum;
+	if (grayscale < 128)
+	{
+		messageRDStatus = 1;
+	}
+	else
+	{
+		messageRDStatus = 0;
 	}
 
 	//judge signal
-	if (signalUpStatus == 1 && signalRightStatus == 1 && signalDownStatus == 1 && signalLeftStatus == 1)
-	{
-		return 0;
-	}
-	else if (signalUpStatus == 1 && signalRightStatus == 0 && signalDownStatus == 0 && signalLeftStatus == 0)
-	{
-		return 1;
-	}
-	else if (signalUpStatus == 1 && signalRightStatus == 1 && signalDownStatus == 0 && signalLeftStatus == 0)
-	{
-		return 2;
-	}
-	else if (signalUpStatus == 0 && signalRightStatus == 1 && signalDownStatus == 0 && signalLeftStatus == 0)
-	{
-		return 3;
-	}
-	else if (signalUpStatus == 0 && signalRightStatus == 1 && signalDownStatus == 1 && signalLeftStatus == 0)
-	{
-		return 4;
-	}
-	else if (signalUpStatus == 0 && signalRightStatus == 0 && signalDownStatus == 1 && signalLeftStatus == 0)
-	{
-		return 5;
-	}
-	else if (signalUpStatus == 0 && signalRightStatus == 0 && signalDownStatus == 1 && signalLeftStatus == 1)
-	{
-		return 6;
-	}
-	else if (signalUpStatus == 0 && signalRightStatus == 0 && signalDownStatus == 0 && signalLeftStatus == 1)
-	{
-		return 7;
-	}
-	else if (signalUpStatus == 1 && signalRightStatus == 0 && signalDownStatus == 0 && signalLeftStatus == 1)
-	{
-		return 8;
-	}
-	else
-	{
-		return -1;
-	}
+	cout << messageLUStatus << " " << messageMUStatus << " " << messageRUStatus << " " <<
+		messageLDStatus << " " << messageMDStatus << " " << messageRDStatus << " " << endl;
+
+	return -1;
 }

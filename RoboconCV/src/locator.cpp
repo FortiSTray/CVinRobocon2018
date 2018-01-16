@@ -6,72 +6,45 @@ Locator::Locator(void)
 }
 Locator::~Locator(void)
 {
-	markerSet.erase(markerSet.begin(), markerSet.end());
+	markerPair.erase(markerPair.begin(), markerPair.end());
 }
 
-QRCode Locator::locate(Mat &img)
+Signal Locator::locate(Mat &img)
 {
 	char fileName[32];
 	static int fileSerial = 0;
 
 	//变量 & 对象定义及初始化
-	markerSet.erase(markerSet.begin(), markerSet.end());
+	markerPair.erase(markerPair.begin(), markerPair.end());
 	srcImage = img.clone();
 	debugImage = img.clone();
 
 	//图像预处理
-	//cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
-	//Canny(preProcImage, testImage, 100, 200, 3);
-	//imshow("Canny1", testImage);
+	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
 	//equalizeHist(preProcImage, preProcImage);
 	//medianBlur(preProcImage, preProcImage, 3);
 	//imshow("equa", preProcImage);
 	//Canny(preProcImage, preProcImage, 100, 200, 3);
 	//threshold(preProcImage, preProcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-	//adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 55, 0);
-
-	cvtColor(srcImage, srcImage, COLOR_BGR2GRAY);
-	srcImage.convertTo(srcImage, CV_32FC1, 1.0 / 255.0);
-	CalcBlockMeanVariance(srcImage, preProcImage);
-	preProcImage = 1.0 - preProcImage;
-	preProcImage = srcImage + preProcImage;
-	imshow("Img", srcImage);
-	cv::threshold(preProcImage, preProcImage, 0.85, 255, cv::THRESH_BINARY);
-	//preProcImage.convertTo(preProcImage, CV_8UC1);
-
-	if (waitKey(2) == ' ')
-	{
-		sprintf(fileName, "./dataProc/data%d.jpg", fileSerial++);
-		if (fileSerial >= 99) { fileSerial--; }
-		imwrite(fileName, preProcImage);
-	}
+	adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
 
 	imshow("After Process", preProcImage);
 
-	dstQRCode.image = Mat(REGULAR_QRCODE_SIDE, REGULAR_QRCODE_SIDE, CV_8UC3, Scalar(0, 0, 0));
-	dstQRCode.lable = 0;
-	return dstQRCode;
+	dstSignal.image = Mat(REGULAR_SIGNAL_HEIGHT, REGULAR_SIGNAL_WIDTH, CV_8UC3, Scalar(0, 0, 0));
+	dstSignal.lable = 0;
+	//return dstSignal;
 
 	//寻找轮廓，并存储轮廓的层次信息
 	findContours(preProcImage.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point());
 
 	//遍历轮廓
-	standbyMarkerCnt = 0;
+	psbMarkerCnt = 0;
 
 	for (size_t i = 0; i < contours.size(); i++)
 	{
 		//剔除轮廓面积过小的轮廓
 		float area = static_cast<float>(contourArea(contours[i]));
 		if (area < 100) { continue; }
-
-		//剔除矩形长宽比不符以及边长过长的轮廓
-		RotatedRect rect = minAreaRect(contours[i]);
-		float rectWidth = rect.size.width;
-		float rectHeight = rect.size.height;
-		float ratio = min(rectWidth, rectHeight) / max(rectWidth, rectHeight);
-
-		if (ratio < 0.85) { continue; }
-		if (rectWidth > preProcImage.cols / 4 || rectHeight > preProcImage.rows / 4) { continue; }
 
 		//统计轮廓层次
 		int num = i;
@@ -80,347 +53,144 @@ QRCode Locator::locate(Mat &img)
 		while (hierarchy[num][2] != -1)
 		{
 			num = hierarchy[num][2];
-			layerCounter = layerCounter + 1;
-			if (layerCounter >= /*5*/2)
+			layerCounter++;
+
+			if (layerCounter == /*5*/2)
 			{
+				//检查此层级轮廓数量是否 >= 2
+				if (hierarchy[num][0] == -1) { continue; }
+
+				//多边形拟合找出四边形的轮廓
+				vector<Point> vertex;
+				approxPolyDP(contours[i], vertex, 5, true);
+				if (vertex.size() != 4) { continue; }
+
 				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
-				standbyMarker[standbyMarkerCnt++] = rect;
-				//cout << standbyMarkerCnt << "  " << rect.size.width << "  " << rect.angle  << endl;
+
+				Point crtGravityCenter = calcGravityCenter(vertex);
+				for (auto crtVertex : vertex)
+				{
+					if (crtVertex.x < crtGravityCenter.x && crtVertex.y < crtGravityCenter.y)
+					{
+						psbMarker[psbMarkerCnt].cornerLeftTop = crtVertex;
+					}
+					else if (crtVertex.x < crtGravityCenter.x && crtVertex.y >= crtGravityCenter.y)
+					{
+						psbMarker[psbMarkerCnt].cornerLeftBottom = crtVertex;
+					}
+					else if (crtVertex.x >= crtGravityCenter.x && crtVertex.y < crtGravityCenter.y)
+					{
+						psbMarker[psbMarkerCnt].cornerRightTop = crtVertex;
+					}
+					else if (crtVertex.x >= crtGravityCenter.x && crtVertex.y >= crtGravityCenter.y)
+					{
+						psbMarker[psbMarkerCnt].cornerRightBottom = crtVertex;
+					}
+				}
+
+				cv::circle(debugImage, psbMarker[psbMarkerCnt].cornerLeftTop, 2, cv::Scalar(0, 255, 0), 2);
+				cv::circle(debugImage, psbMarker[psbMarkerCnt].cornerLeftBottom, 2, cv::Scalar(0, 0, 255), 2);
+				cv::circle(debugImage, psbMarker[psbMarkerCnt].cornerRightTop, 2, cv::Scalar(255, 0, 255), 2);
+				cv::circle(debugImage, psbMarker[psbMarkerCnt].cornerRightBottom, 2, cv::Scalar(255, 255, 0), 2);
+
+				psbMarkerCnt++;
 
 				break;
 			}
 		}
 
 		//如果预备 Marker 数组填满则跳出
-		if (standbyMarkerCnt >= STANDBY_MARKER_NUM)
+		if (psbMarkerCnt >= POSSIBLE_MARKER_NUM)
 		{
 			break;
 		}
 	}
 
-	if (standbyMarkerCnt >= 3)
+	if (psbMarkerCnt >= 2)
 	{
-		markerSet = findMarkerReal(standbyMarker, standbyMarkerCnt);
+		markerPair = findMarkerPair(psbMarker, psbMarkerCnt);
 	}
 
-	getQRCode(markerSet);
+	dstSignal = getSignal(markerPair);
+
 	imshow("Debug", debugImage);
 
-	return dstQRCode;
+	return dstSignal;
 }
 
-//从三个marker的信息中获取QRCode
-void Locator::getQRCode(vector<Marker> &mkrSet)
+//从可能的 Marker 里面找出最终的 Marker 对
+vector<Marker> Locator::findMarkerPair(Marker* psbMarker, int MarkerCnt)
 {
-	if (mkrSet.size() == (size_t)3)
+	vector<Marker> markerPair;
+	markerPair.erase(markerPair.begin(), markerPair.end());
+
+	if (MarkerCnt < 2)
 	{
-		//三个 Marker 中心点两两计算距离
-		float distanceAB = calcDistance(mkrSet[0].center, mkrSet[1].center);
-		float distanceBC = calcDistance(mkrSet[1].center, mkrSet[2].center);
-		float distanceAC = calcDistance(mkrSet[0].center, mkrSet[2].center);
-
-		Marker tempMarkerA;
-		Marker tempMarkerB;
-
-		Point2f vectorA;
-		Point2f vectorB;
-
-		//QRCode 四个Marker中心点
-		Point2f pointLeftTop;
-		Point2f pointLeftBottom;
-		Point2f pointRightTop;
-		Point2f pointVirtual;
-
-		//临时存储 Marker 的四个角
-		Point2f markerCorners[4];
-
-		//仿射变换的源顶点和目标顶点
-		Point2f srcCorner[3];
-		Point2f dstCorner[3];
-
-		//找出左上顶点的 Marker
-		if (distanceAB > distanceBC && distanceAB > distanceAC)
-		{
-			markerLeftTop = mkrSet[2];
-
-			tempMarkerA = mkrSet[0];
-			tempMarkerB = mkrSet[1];
-		}
-		else if (distanceBC > distanceAB && distanceBC > distanceAC)
-		{
-			markerLeftTop = mkrSet[0];
-
-			tempMarkerA = mkrSet[1];
-			tempMarkerB = mkrSet[2];
-		}
-		else if (distanceAC > distanceAB && distanceAC > distanceBC)
-		{
-			markerLeftTop = mkrSet[1];
-
-			tempMarkerA = mkrSet[0];
-			tempMarkerB = mkrSet[2];
-		}
-		else {}
-
-		//找出左下和右上的 Marker
-		vectorA.x = tempMarkerA.center.x - markerLeftTop.center.x;
-		vectorA.y = tempMarkerA.center.y - markerLeftTop.center.y;
-		vectorB.x = tempMarkerB.center.x - markerLeftTop.center.x;
-		vectorB.y = tempMarkerB.center.y - markerLeftTop.center.y;
-
-		if (calcCrossProduct(vectorA, vectorB) > 0)
-		{
-			markerLeftBottom = tempMarkerB;
-			markerRightTop = tempMarkerA;
-		}
-		else
-		{
-			markerLeftBottom = tempMarkerA;
-			markerRightTop = tempMarkerB;
-		}
-
-		//找出四个 Marker 中心点
-		pointLeftTop = markerLeftTop.center;
-		pointLeftBottom = markerLeftBottom.center;
-		pointRightTop = markerRightTop.center;
-		pointVirtual = findPointVirtual(pointLeftTop, pointLeftBottom, pointRightTop);
-
-		//找出二维码的三个角
-		markerLeftTop.points(markerCorners);
-		cornerLeftTop = findFarthestPoint(markerCorners, pointLeftBottom, pointRightTop);
-
-		markerLeftBottom.points(markerCorners);
-		cornerLeftBottom = findFarthestPoint(markerCorners, pointLeftTop, pointVirtual);
-
-		markerRightTop.points(markerCorners);
-		cornerRightTop = findFarthestPoint(markerCorners, pointLeftTop, pointVirtual);
-
-		//debug
-		circle(debugImage, cornerLeftTop,    3, Scalar(255, 0, 0), 2);
-		circle(debugImage, cornerLeftBottom, 3, Scalar(0, 255, 0), 2);
-		circle(debugImage, cornerRightTop,   3, Scalar(0, 0, 255), 2);
-
-		//为仿射变换的源顶点和目标顶点赋值
-		srcCorner[0] = cornerLeftTop;
-		srcCorner[1] = cornerLeftBottom;
-		srcCorner[2] = cornerRightTop;
-
-		dstCorner[0] = Point(0, 0);
-		dstCorner[1] = Point(0, REGULAR_QRCODE_SIDE - 1);
-		dstCorner[2] = Point(REGULAR_QRCODE_SIDE - 1, 0);
-
-		//仿射变换
-		Mat affineMatrix;
-		affineMatrix = getAffineTransform(srcCorner, dstCorner);
-		warpAffine(srcImage, dstQRCode.image, affineMatrix, Size(REGULAR_QRCODE_SIDE, REGULAR_QRCODE_SIDE));
-
-		//QRCode的lable赋值为1表示找到QRCode
-		dstQRCode.lable = 1;
+		return markerPair;
 	}
 	else
 	{
-		dstQRCode.image = Mat(REGULAR_QRCODE_SIDE, REGULAR_QRCODE_SIDE, CV_8UC3, Scalar(0, 0, 0));
-		dstQRCode.lable = 0;
+		for (int i = 0; i < 2; i++)
+		{
+			markerPair.push_back(psbMarker[i]);
+		}
 	}
+
+	return markerPair;
 }
 
-//寻找右下角的虚拟 Marker 中心点
-Point2f Locator::findPointVirtual(Point2f pointLT, Point2f pointLB, Point2f pointRT)
+//从三个marker的信息中获取Signal
+Signal Locator::getSignal(vector<Marker> markerPair)
 {
-	Point2f vectorA;
-	Point2f vectorB;
-	Point2f vectorTarget;
-	Point2f pointVirtual;
+	//要找的目标Signal
+	Signal crtSignal;
+	crtSignal.image = Mat(REGULAR_SIGNAL_HEIGHT, REGULAR_SIGNAL_WIDTH, CV_8UC3, Scalar(0, 0, 0));
+	crtSignal.lable = 0;
 
-	vectorA.x = pointLB.x - pointLT.x;
-	vectorA.y = pointLB.y - pointLT.y;
-	vectorB.x = pointRT.x - pointLT.x;
-	vectorB.y = pointRT.y - pointLT.y;
+	//左Marker和右Marker
+	Marker markerLeft;
+	Marker markerRight;
 
-	vectorTarget.x = vectorA.x + vectorB.x;
-	vectorTarget.y = vectorA.y + vectorB.y;
+	//透视变换的源顶点和目标顶点
+	Point2f srcCorner[4];
+	Point2f dstCorner[4];
 
-	pointVirtual.x = pointLT.x + vectorTarget.x;
-	pointVirtual.y = pointLT.y + vectorTarget.y;
-
-	return pointVirtual;
-}
-
-//寻找一个点集中距离一条直线最远的点
-Point2f Locator::findFarthestPoint(Point2f* pointSet, Point2f linePointA, Point2f linePointB)
-{
-	float tempDist = 0.0f;
-	float farthestDist = 0.0f;
-	Point2f farthestPoint;
-
-	for (size_t i = 0; i < 4; i++)
+	if (markerPair.size() != 2)
 	{
-		tempDist = distPointToLine(pointSet[i], linePointA, linePointB);
-		if (tempDist > farthestDist)
-		{
-			farthestDist = tempDist;
-			farthestPoint = pointSet[i];
-		}
+		return crtSignal;
 	}
-
-	return farthestPoint;
-}
-
-//从预备 Marker 的集合里面找出 真·Marker
-vector<Marker> Locator::findMarkerReal(Marker* standbyMarker, int MarkerCnt)
-{
-	//按 width 或 angle 升序排列第 N 个元素的序号
-	int elem[10];
-	int tempElem;
-	
-	int serialNumByWidth[10];
-	int widthCnt = 0;
-
-	int serialNumByAngle[10];
-	int angleCnt = 0;
-	bool angleScanDoneFlag = 0;
-	
-	vector<Marker> markerReal;
-
-	//根据 width 判断 Marker
-	for (int i = 0; i < MarkerCnt; i++) { elem[i] = i; }
-
-	for (int i = 0; i < MarkerCnt; i++)
+	else
 	{
-		for (int j = i + 1; j < MarkerCnt; j++)
-		{
-			if (standbyMarker[elem[i]].size.width > standbyMarker[elem[j]].size.width)
-			{
-				tempElem = elem[i] ;
-				elem[i]  = elem[j] ;
-				elem[j]  = tempElem;
-			}
-		}
-	}
-
-	for (int i = 0; i < MarkerCnt - 1; i++)
-	{
-		widthCnt = 0;
-
-		while (standbyMarker[elem[i + 1]].size.width - standbyMarker[elem[i]].size.width < 5.0f)
-		{
-			serialNumByWidth[widthCnt++] = elem[i++];
-			if (i == MarkerCnt - 1) { break; }
-		}
-		serialNumByWidth[widthCnt++] = elem[i];
-
-		if (widthCnt >= 3) { break; }
-	}
-
-	if (widthCnt < 3)
-	{
-		markerReal.erase(markerReal.begin(), markerReal.end());
-		return markerReal;
-	}
-
-	//根据 angle 判断 Marker
-	for (int i = 0; i < MarkerCnt; i++) { elem[i] = i; }
-
-	for (int i = 0; i < MarkerCnt; i++)
-	{
-		for (int j = i + 1; j < MarkerCnt; j++)
-		{
-			if (standbyMarker[elem[i]].angle > standbyMarker[elem[j]].angle)
-			{
-				tempElem = elem[i] ;
-				elem[i]  = elem[j] ;
-				elem[j]  = tempElem;
-			}
-		}
-	}
-
-	for (int i = 0; i < MarkerCnt - 1; i++)
-	{
-		angleCnt = 0;
+		Point tempMidpoint = calcMidpoint(markerPair[0].cornerLeftTop, markerPair[1].cornerLeftTop);
 		
-		while (standbyMarker[elem[i + 1]].angle - standbyMarker[elem[i]].angle < 5.0f)
+		if (markerPair[0].cornerLeftTop.x < tempMidpoint.x)
 		{
-			serialNumByAngle[angleCnt++] = elem[i++];
-			if (angleCnt == MarkerCnt - 1) { break; }
-
-			if (i == MarkerCnt - 1)
-			{
-				angleScanDoneFlag = 1;
-				if (standbyMarker[elem[0]].angle - standbyMarker[elem[MarkerCnt - 1]].angle + 90.0f < 5.0f)
-				{
-					serialNumByAngle[angleCnt++] = elem[MarkerCnt - 1];
-					i = 0;
-					if (angleCnt == MarkerCnt - 1) { break; }
-				}
-			}
+			markerLeft  = markerPair[0];
+			markerRight = markerPair[1];
 		}
-		serialNumByAngle[angleCnt++] = elem[i];
-
-		if (angleCnt >= 3 || angleScanDoneFlag == 1) { break; }
-	}
-
-	if (angleCnt < 3)
-	{
-		markerReal.erase(markerReal.begin(), markerReal.end());
-		return markerReal;
-	}
-
-	//寻找 width 和 angle 的匹配
-	for (int i = 0; i < widthCnt; i++)
-	{
-		for (int j = 0; j < angleCnt; j++)
+		else
 		{
-			if (serialNumByWidth[i] == serialNumByAngle[j])
-			{
-				markerReal.push_back(standbyMarker[serialNumByWidth[i]]);
-				if (markerReal.size() == 3) { return markerReal; }
-			}
+			markerRight = markerPair[0];
+			markerLeft  = markerPair[1];
 		}
+
+		//透视变换
+		srcCorner[0] = markerLeft.cornerLeftTop;
+		srcCorner[1] = markerLeft.cornerLeftBottom;
+		srcCorner[2] = markerRight.cornerRightTop;
+		srcCorner[3] = markerRight.cornerRightBottom;
+
+		dstCorner[0] = Point(0, 0);
+		dstCorner[1] = Point(0, REGULAR_SIGNAL_HEIGHT);
+		dstCorner[2] = Point(REGULAR_SIGNAL_WIDTH, 0);
+		dstCorner[3] = Point(REGULAR_SIGNAL_WIDTH, REGULAR_SIGNAL_HEIGHT);
+
+		cv::Mat transMatrix = cv::getPerspectiveTransform(srcCorner, dstCorner);
+		cv::warpPerspective(srcImage, crtSignal.image, transMatrix, crtSignal.image.size());
+
+		crtSignal.lable = 1;
 	}
 
-	markerReal.erase(markerReal.begin(), markerReal.end());
-	return markerReal;
+	return crtSignal;
 }
 
-//计算块均值方差
-void Locator::CalcBlockMeanVariance(Mat& Img, Mat& Res, float blockSide) // blockSide - the parameter (set greater for larger font on image)
-{
-	Mat I;
-	Img.convertTo(I, CV_32FC1);
-	Res = Mat::zeros(Img.rows / blockSide, Img.cols / blockSide, CV_32FC1);
-	Mat inpaintmask;
-	Mat patch;
-	Mat smallImg;
-	Scalar m, s;
-
-	for (int i = 0; i<Img.rows - blockSide; i += blockSide)
-	{
-		for (int j = 0; j<Img.cols - blockSide; j += blockSide)
-		{
-			patch = I(Range(i, i + blockSide + 1), Range(j, j + blockSide + 1));
-			cv::meanStdDev(patch, m, s);
-			if (s[0]>0.01) // Thresholding parameter (set smaller for lower contrast image)
-			{
-				Res.at<float>(i / blockSide, j / blockSide) = m[0];
-			}
-			else
-			{
-				Res.at<float>(i / blockSide, j / blockSide) = 0;
-			}
-		}
-	}
-
-	cv::resize(I, smallImg, Res.size());
-
-	cv::threshold(Res, inpaintmask, 0.02, 1.0, cv::THRESH_BINARY);
-
-	Mat inpainted;
-	smallImg.convertTo(smallImg, CV_8UC1, 255);
-
-	inpaintmask.convertTo(inpaintmask, CV_8UC1);
-	imshow("temp1", smallImg);
-	inpaint(smallImg, inpaintmask, inpainted, 5, INPAINT_TELEA);
-	imshow("tmp2", inpainted);
-	cv::resize(inpainted, Res, Img.size());
-	Res.convertTo(Res, CV_32FC1, 1.0 / 255.0);
-}

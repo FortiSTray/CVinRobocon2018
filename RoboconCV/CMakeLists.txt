@@ -14,6 +14,7 @@ add_executable(${PROJ_NAME} ${SOURCE_LIST} ${HEADER_LIST})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJ_NAME})
 
 # OpenCV
+set (OpenCV_DIR "C:/ST42Data/Code/opencv3Src/install/x86/vc15/lib") # 更改此路径为OpenCVConfig.cmake的路径（库目录）
 find_package(OpenCV REQUIRED)
 
 if(OpenCV_FOUND)
