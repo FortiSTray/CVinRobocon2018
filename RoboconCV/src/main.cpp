@@ -34,8 +34,8 @@ char		    g_CameraName[64];
 Locator CrtLocator;
 Decoder CrtDecoder;
 
-char fileName[32];
-int fileSerial = 0;
+//char fileName[32];
+//int fileSerial = 0;
 
 /*图像抓取线程，主动调用SDK接口函数获取图像*/
 UINT WINAPI uiDisplayThread(LPVOID lpParam)
@@ -77,18 +77,18 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				*/
 
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
-				imshow("Original", srcImage);
+				//imshow("Original", srcImage);
 
 				Signal dstSignal;
 				dstSignal = CrtLocator.locate(srcImage);
-				imshow("Signal", dstSignal.image);
+				//imshow("Signal", dstSignal.image);
 
-				if (waitKey(2) == ' ')
+				/*if (waitKey(2) == ' ')
 				{
 					sprintf(fileName, "./data/data%d.jpg", fileSerial++);
 					if (fileSerial >= 99) { fileSerial--; }
 					imwrite(fileName, dstSignal.image);
-				}
+				}*/
 
 				int message = -1;
 				if (dstSignal.lable == true)

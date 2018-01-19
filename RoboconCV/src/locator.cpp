@@ -18,14 +18,9 @@ Signal Locator::locate(Mat &img)
 
 	//图像预处理
 	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
-	//equalizeHist(preProcImage, preProcImage);
-	//medianBlur(preProcImage, preProcImage, 3);
-	//imshow("equa", preProcImage);
-	//Canny(preProcImage, preProcImage, 100, 200, 3);
-	//threshold(preProcImage, preProcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
 	adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
 
-	imshow("After Process", preProcImage);
+	//imshow("After Process", preProcImage);
 
 	dstSignal.image = Mat(REGULAR_SIGNAL_HEIGHT, REGULAR_SIGNAL_WIDTH, CV_8UC3, Scalar(0, 0, 0));
 	dstSignal.lable = false;
@@ -51,7 +46,7 @@ Signal Locator::locate(Mat &img)
 			num = hierarchy[num][2];
 			layerCounter++;
 
-			if (layerCounter == /*5*/2)
+			if (layerCounter == 2)
 			{
 				//检查此层级轮廓数量是否 == 2
 				if (hierarchy[num][0] == -1) { continue; }
@@ -110,7 +105,7 @@ Signal Locator::locate(Mat &img)
 
 	dstSignal = getSignal(markerPair);
 
-	imshow("Debug", debugImage);
+	//imshow("Debug", debugImage);
 
 	return dstSignal;
 }
