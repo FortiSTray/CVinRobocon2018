@@ -315,10 +315,12 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\computeTime.cpp"  />
     <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\decoder.cpp"  />
     <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\locator.cpp"  />
     <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\main.cpp"  />
     <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp"  />
+    <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\computeTime.h" />
     <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\decoder.h" />
     <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\locator.h" />
     <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.h" />

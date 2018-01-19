@@ -20,7 +20,7 @@ Signal Locator::locate(Mat &img)
 	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
 	adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
 
-	//imshow("After Process", preProcImage);
+	imshow("After Process", preProcImage);
 
 	dstSignal.image = Mat(REGULAR_SIGNAL_HEIGHT, REGULAR_SIGNAL_WIDTH, CV_8UC3, Scalar(0, 0, 0));
 	dstSignal.lable = false;
@@ -105,7 +105,7 @@ Signal Locator::locate(Mat &img)
 
 	dstSignal = getSignal(markerPair);
 
-	//imshow("Debug", debugImage);
+	imshow("Debug", debugImage);
 
 	return dstSignal;
 }

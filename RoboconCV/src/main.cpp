@@ -12,6 +12,7 @@
 #include "CameraApi.h"
 #include "locator.h"
 #include "decoder.h"
+#include "computeTime.h"
 
 using namespace std;
 using namespace cv;
@@ -33,6 +34,7 @@ char		    g_CameraName[64];
 
 Locator CrtLocator;
 Decoder CrtDecoder;
+ComputeTime FPSOutput;
 
 //char fileName[32];
 //int fileSerial = 0;
@@ -77,11 +79,11 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 				*/
 
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
-				//imshow("Original", srcImage);
+				imshow("Original", srcImage);
 
 				Signal dstSignal;
 				dstSignal = CrtLocator.locate(srcImage);
-				//imshow("Signal", dstSignal.image);
+				imshow("Signal", dstSignal.image);
 
 				/*if (waitKey(2) == ' ')
 				{
@@ -101,9 +103,8 @@ UINT WINAPI uiDisplayThread(LPVOID lpParam)
 					//cout << message << endl;
 				}
 
-				int time = clock() - start;
-				cout << time << endl;
-				start = clock();
+				cout << FPSOutput.End() << endl;
+				FPSOutput.Begin();
 				
 				/*
 				==========================================================================================================
