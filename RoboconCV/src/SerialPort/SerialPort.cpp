@@ -18,7 +18,6 @@
 ///  修订说明：  
 //////////////////////////////////////////////////////////////////////////  
 
-//#include "StdAfx.h"  
 #include "SerialPort.h"  
 #include <process.h>  
 #include <iostream>  

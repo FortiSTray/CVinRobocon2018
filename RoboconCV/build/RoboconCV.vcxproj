@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -99,6 +99,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;UNICODE;_UNICODE;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;UNICODE;_UNICODE;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -142,7 +143,9 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -186,7 +189,8 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;UNICODE;_UNICODE;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -315,11 +319,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\computeTime.cpp"  />
-    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\decoder.cpp"  />
-    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\locator.cpp"  />
-    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\main.cpp"  />
-    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp"  />
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\computeTime.cpp" />
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\decoder.cpp" />
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\locator.cpp" />
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\main.cpp" />
+    <ClCompile Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\SerialPort\SerialPort.cpp" />
     <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\computeTime.h" />
     <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\decoder.h" />
     <ClInclude Include="C:\ST42Data\Code\CVinRobocon2018\RoboconCV\src\locator.h" />

@@ -7,7 +7,7 @@
 using namespace std;
 using namespace cv;
 
-//宏定义六个信息的尺寸和位置
+//宏定义六个信息的尺寸和左上角坐标
 #define MESSAGE_SIZE 7
 
 #define MESSAGE_LU_X 16
