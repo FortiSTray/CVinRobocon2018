@@ -18,7 +18,23 @@ typedef struct
 	Point cornerLeftBottom;
 	Point cornerRightTop;
 	Point cornerRightBottom;
+
+	//重载[]运算符以用序号访问四个角点
+	Point operator[](uchar i)
+	{
+		if (i == 0)        { return cornerLeftTop; }
+		else if (i == 1)   { return cornerLeftBottom; }
+		else if (i == 2)   { return cornerRightTop; }
+		else if (i == 3)   { return cornerRightBottom; }
+		else               { cout << "Marker corner access denied!" << endl; return Point(0, 0); }
+	}
 }Marker;
+
+typedef struct
+{
+	Point pointA;
+	Point pointB;
+}PointPair;
 
 typedef struct
 {
@@ -39,8 +55,18 @@ private:
 	//从可能的Marker里面找出最终的Marker对
 	vector<Marker> findMarkerPair(Marker* psbMarker, int MarkerCnt);
 
+	vector<Marker> findMarkerPairNew(Marker* psbMarker, int MarkerCnt);
+
 	//从marker对的信息中获取目标Signal
 	Signal getSignal(vector<Marker> markerPair);
+
+	//两点间距离计算
+	inline float calcDistance(Point2f pointA, Point2f pointB)
+	{
+		float xDifference = pointA.x - pointB.x;
+		float yDifference = pointA.y - pointB.y;
+		return sqrt(xDifference * xDifference + yDifference * yDifference);
+	}
 
 	//两点中点计算
 	inline Point2f calcMidpoint(Point2f pointA, Point2f pointB)

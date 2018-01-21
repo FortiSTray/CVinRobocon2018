@@ -18,7 +18,7 @@ Signal Locator::locate(Mat &img)
 
 	//图像预处理
 	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
-	adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 15, 0);
+	adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 25, 0);
 
 	imshow("After Process", preProcImage);
 
@@ -101,7 +101,7 @@ Signal Locator::locate(Mat &img)
 		}
 	}
 
-	markerPair = findMarkerPair(psbMarker, psbMarkerCnt);
+	markerPair = findMarkerPairNew(psbMarker, psbMarkerCnt);
 
 	dstSignal = getSignal(markerPair);
 
@@ -186,3 +186,107 @@ Signal Locator::getSignal(vector<Marker> markerPair)
 	return crtSignal;
 }
 
+//从可能的 Marker 里面找出最终的 Marker 对
+vector<Marker> Locator::findMarkerPairNew(Marker* psbMarker, int MarkerCnt)
+{
+	vector<Marker> markerPair;
+
+	PointPair pointPairA;
+	PointPair pointPairB;
+	PointPair midpointPair;
+
+	float crtDistance;
+	float minDistanceA = 1920;
+	float minDistanceB = 1920;
+
+	for (int i = 0; i < MarkerCnt; i++)
+	{
+		for (int j = i + 1; j < MarkerCnt; j++)
+		{
+			for (int m = 0; m < 4; m++)
+			{
+				for (int n = 0; n < 4; n++)
+				{
+					crtDistance = calcDistance(psbMarker[i][m], psbMarker[j][n]);
+					if (crtDistance < minDistanceB)
+					{
+						if (crtDistance < minDistanceA)
+						{
+							minDistanceB = minDistanceA;
+							minDistanceA = crtDistance;
+
+							pointPairB.pointA = pointPairA.pointA;
+							pointPairB.pointB = pointPairA.pointB;
+							pointPairA.pointA = psbMarker[i][m];
+							pointPairA.pointB = psbMarker[j][n];
+						}
+						else
+						{
+							minDistanceB = crtDistance;
+
+							pointPairB.pointA = psbMarker[i][m];
+							pointPairB.pointB = psbMarker[j][n];
+						}
+					}
+				}
+			}
+			midpointPair.pointA = calcMidpoint(pointPairA.pointA, pointPairB.pointA);
+			midpointPair.pointB = calcMidpoint(pointPairA.pointB, pointPairB.pointB);
+
+			//cv::line(debugImage, midpointPair.pointA, midpointPair.pointB, Scalar(0, 255, 0), 2);
+
+			minDistanceA = 1920;
+			minDistanceB = 1920;
+
+			LineIterator timingPatternIt(preProcImage, midpointPair.pointA, midpointPair.pointB);
+			uchar crtPixel = 255;
+			vector<int> timingCounter;
+			int crtTimingCounter = 0;
+
+			for (int x = 0; x < timingPatternIt.count; x++)
+			{
+				//cout << "  " << (int)**timingPatternIt << endl;
+				timingPatternIt++;
+				if (fabs((uchar)**timingPatternIt - crtPixel) <= 127)
+				{
+					crtTimingCounter++;
+				}
+				else
+				{
+					timingCounter.push_back(++crtTimingCounter);
+					crtTimingCounter = 0;
+					crtPixel = fabs(crtPixel - 255);
+				}
+			}
+
+			/*for (int x = 0; x < timingCounter.size(); x++)
+			{
+				cout << timingCounter[x] << "   ";
+			}
+			cout << endl;*/
+
+			if (timingCounter.size() == 5)
+			{
+				int ratio[5];
+
+				for (int x = 0; x < 5; x++)
+				{
+					ratio[x] = static_cast<int>((float)timingCounter[x] / ((float)timingCounter[2] / 25.0f * 35.0f) + 0.5f);
+				}
+
+				if (ratio[0] == 1 && ratio[1] == 1 && ratio[3] == 1 && ratio[4] == 1)
+				{
+					cv::line(debugImage, midpointPair.pointA, midpointPair.pointB, Scalar(255, 0, 255), 2);
+
+					markerPair.push_back(psbMarker[i]);
+					markerPair.push_back(psbMarker[j]);
+
+					//waitKey();
+
+					return markerPair;
+				}
+			}
+		}
+	}
+	return markerPair;
+}

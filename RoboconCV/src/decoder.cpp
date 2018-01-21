@@ -25,9 +25,9 @@ int Decoder::decode(Mat& img)
 	//左上信息块
 	grayscale = 0;
 	pixNum = 0;
-	for (int i = MESSAGE_LU_Y; i < MESSAGE_LU_Y + MESSAGE_SIZE; i += 3)
+	for (int i = MESSAGE_LU_Y; i < MESSAGE_LU_Y + MESSAGE_SIZE; i += 1)
 	{
-		for (int j = MESSAGE_LU_X; j < MESSAGE_LU_X + MESSAGE_SIZE; j += 3)
+		for (int j = MESSAGE_LU_X; j < MESSAGE_LU_X + MESSAGE_SIZE; j += 1)
 		{
 			grayscale += preProcImage.ptr<uchar>(i)[j];
 			pixNum++;

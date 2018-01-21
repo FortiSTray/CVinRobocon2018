@@ -20,13 +20,11 @@ using namespace cv;
 #define CAMERA_NEAR 0
 #define CAMERA_FAR  1
 
-//UINT            m_threadID;		//图像抓取线程的ID
-//HANDLE          m_hDispThread;	//图像抓取线程的句柄
 BOOL            m_bExit = FALSE;		//用来通知图像抓取线程结束
-CameraHandle    m_hCameraNear;		//近焦相机句柄
-CameraHandle    m_hCameraFar;		//远焦相机句柄
-BYTE*           m_pFrameBuffer; //用于将原始图像数据转换为RGB的缓冲区
-tSdkFrameHead   m_sFrInfo;		//用于保存当前图像帧的帧头信息
+CameraHandle    m_hCameraNear;		    //近焦相机句柄
+CameraHandle    m_hCameraFar;		    //远焦相机句柄
+BYTE*           m_pFrameBuffer;         //用于将原始图像数据转换为RGB的缓冲区
+tSdkFrameHead   m_sFrInfo;		        //用于保存当前图像帧的帧头信息
 
 //int	            m_iDispFrameNum;	//用于记录当前已经显示的图像帧的数量
 //float           m_fDispFps;			//显示帧率
@@ -34,19 +32,18 @@ tSdkFrameHead   m_sFrInfo;		//用于保存当前图像帧的帧头信息
 //tSdkFrameStatistic  m_sFrameCount;
 //tSdkFrameStatistic  m_sFrameLast;
 //int					m_iTimeLast;
-//char		    g_CameraName[64];
 
+//类的实例化
 Locator CrtLocator;
 Decoder CrtDecoder;
 ComputeTime FPSOutput;
 
+//用于Debug图像输出
 //char fileName[32];
 //int fileSerial = 0;
 
 int main(int argc, char* argv[])
 {
-	//tSdkCameraDevInfo sCameraList[10];
-	//INT iCameraNums;
 	CameraSdkStatus status;
 	tSdkCameraCapbility sCameraInfo;
 
@@ -56,12 +53,6 @@ int main(int argc, char* argv[])
 	bool cameraSelect = CAMERA_NEAR;
 	bool getImageBufferFlag = false;
 	int keyStatus = 0;
-
-	//临时变量
-	int start = 0;
-
-	////枚举设备，获得设备列表
-	//iCameraNums = 10;//调用CameraEnumerateDevice前，先设置iCameraNums = 10，表示最多只读取10个设备，如果需要枚举更多的设备，请更改sCameraList数组的大小和iCameraNums的值
 
 	if (CameraEnumerateDeviceEx() == 0)
 	{
@@ -87,6 +78,12 @@ int main(int argc, char* argv[])
 		return FALSE;
 	}
 	
+	//根据安装方式设置源图像镜像操作
+	CameraSetMirror(m_hCameraNear, 0, FALSE);
+	CameraSetMirror(m_hCameraNear, 1, TRUE );
+	CameraSetMirror(m_hCameraFar , 0, TRUE );
+	CameraSetMirror(m_hCameraFar , 1, FALSE);
+
 	//获得相机的特性描述，两个相机型号及硬件设置完全相同，所以只需要获取一台相机的信息
 	CameraGetCapability(m_hCameraNear, &sCameraInfo);
 
@@ -102,6 +99,7 @@ int main(int argc, char* argv[])
 	CameraCreateSettingPage(m_hCameraNear, NULL, "CameraNear", NULL, NULL, 0);
 	CameraCreateSettingPage(m_hCameraFar , NULL, "CameraFar" , NULL, NULL, 0);
 
+	//进入工作模式开始采集图像
 	CameraPlay(m_hCameraNear);
 	CameraPlay(m_hCameraFar );
 
@@ -109,6 +107,7 @@ int main(int argc, char* argv[])
 	CameraShowSettingPage(m_hCameraNear, TRUE);
 	CameraShowSettingPage(m_hCameraFar , TRUE);
 
+	//主循环
 	while (!m_bExit)
 	{
 		if (cameraSelect == CAMERA_NEAR)
@@ -116,8 +115,7 @@ int main(int argc, char* argv[])
 			if (CameraGetImageBuffer(m_hCameraNear, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 			{
 				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-				//我公司大部分型号的相机，原始数据都是Bayer格式的
-				status = CameraImageProcess(m_hCameraNear, pbyBuffer, m_pFrameBuffer, &sFrameInfo);//连续模式
+				status = CameraImageProcess(m_hCameraNear, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
 
 				getImageBufferFlag = true;
 			}
@@ -131,8 +129,7 @@ int main(int argc, char* argv[])
 			if (CameraGetImageBuffer(m_hCameraFar, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 			{
 				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-				//我公司大部分型号的相机，原始数据都是Bayer格式的
-				status = CameraImageProcess(m_hCameraFar, pbyBuffer, m_pFrameBuffer, &sFrameInfo);//连续模式
+				status = CameraImageProcess(m_hCameraFar, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
 
 				getImageBufferFlag = true;
 			}
@@ -154,9 +151,6 @@ int main(int argc, char* argv[])
 
 			if (status == CAMERA_STATUS_SUCCESS)
 			{
-				////调用SDK封装好的显示接口来显示图像,您也可以将m_pFrameBuffer中的RGB数据通过其他方式显示，比如directX,OpengGL,等方式。
-				//CameraImageOverlay(hCamera, m_pFrameBuffer, &sFrameInfo);
-
 				/*
 				==========================================================================================================
 				                                              Main Task
@@ -199,7 +193,7 @@ int main(int argc, char* argv[])
 			}
 
 			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
-			//否则再次调用CameraGetImageBuffer时，程序将被挂起，知道其他线程中调用CameraReleaseImageBuffer来释放了buffer
+			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
 			if (cameraSelect == CAMERA_NEAR)
 			{
 				CameraReleaseImageBuffer(m_hCameraNear, pbyBuffer);
@@ -212,7 +206,8 @@ int main(int argc, char* argv[])
 			memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
 		}
 
-		keyStatus = waitKey(10);
+		//延时及检测按键事件
+		keyStatus = waitKey(1);
 		if (keyStatus == 27)
 		{
 			m_bExit = TRUE;
