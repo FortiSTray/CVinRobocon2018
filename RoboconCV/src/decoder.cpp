@@ -20,6 +20,7 @@ int Decoder::decode(Mat& img)
 
 	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
 	threshold(preProcImage, preProcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+	imshow("Processed Signal", preProcImage);
 	
 	//左上信息块
 	grayscale = 0;
