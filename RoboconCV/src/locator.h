@@ -7,6 +7,8 @@
 using namespace std;
 using namespace cv;
 
+#define Pi 3.14159265359f
+
 #define REGULAR_SIGNAL_HEIGHT 21
 #define REGULAR_SIGNAL_WIDTH  75
 
@@ -92,6 +94,24 @@ private:
 		gravityCenter.y /= points.size();
 
 		return gravityCenter;
+	}
+
+	//计算两个向量所在直线的夹角（锐角）
+	inline float calcSharpAngle(Point2f vectorA, Point2f vectorB)
+	{
+		float dotProduct = vectorA.x * vectorB.x + vectorA.y * vectorB.y;
+		float modA = sqrtf(vectorA.x * vectorA.x + vectorA.y * vectorA.y);
+		float modB = sqrtf(vectorB.x * vectorB.x + vectorB.y * vectorB.y);
+
+		float sharpAngle = acos(dotProduct / (modA * modB));
+		if (sharpAngle >= 0 && sharpAngle <= Pi / 2.0f)
+		{
+			return sharpAngle;
+		}
+		else
+		{
+			return Pi - sharpAngle;
+		}
 	}
 
 private:

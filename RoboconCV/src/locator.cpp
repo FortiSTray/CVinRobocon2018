@@ -191,18 +191,45 @@ vector<Marker> Locator::findMarkerPairNew(Marker* psbMarker, int MarkerCnt)
 {
 	vector<Marker> markerPair;
 
+	//用于判断Marker顶边四点共线
+	Point2f vectorA;
+	Point2f vectorB;
+	Point2f vectorC;
+	float sharpAngleA;
+	float sharpAngleB;
+
 	PointPair pointPairA;
 	PointPair pointPairB;
 	PointPair midpointPair;
 
 	float crtDistance;
-	float minDistanceA = 1920;
-	float minDistanceB = 1920;
-
+	float minDistanceA = 9999;
+	float minDistanceB = 9999;
+	
+	//遍历任意两个Marker
 	for (int i = 0; i < MarkerCnt; i++)
 	{
 		for (int j = i + 1; j < MarkerCnt; j++)
 		{
+			//检查两个Marker的顶边是否在同一条直线上（四点共线）
+			vectorA.x = static_cast<float>(psbMarker[i].cornerRightTop.x - psbMarker[i].cornerLeftTop.x);
+			vectorA.y = static_cast<float>(psbMarker[i].cornerRightTop.y - psbMarker[i].cornerLeftTop.y);
+
+			vectorB.x = static_cast<float>(psbMarker[j].cornerRightTop.x - psbMarker[j].cornerLeftTop.x);
+			vectorB.y = static_cast<float>(psbMarker[j].cornerRightTop.y - psbMarker[j].cornerLeftTop.y);
+
+			vectorC.x = static_cast<float>(psbMarker[j].cornerLeftTop.x - psbMarker[i].cornerLeftTop.x);
+			vectorC.y = static_cast<float>(psbMarker[j].cornerLeftTop.y - psbMarker[i].cornerLeftTop.y);
+
+			sharpAngleA = calcSharpAngle(vectorA, vectorC);
+			sharpAngleB = calcSharpAngle(vectorB, vectorC);
+
+			if (sharpAngleA >= Pi / 12.0f || sharpAngleA >= Pi / 12.0f)
+			{
+				continue;
+			}
+			
+			//
 			for (int m = 0; m < 4; m++)
 			{
 				for (int n = 0; n < 4; n++)
@@ -233,7 +260,7 @@ vector<Marker> Locator::findMarkerPairNew(Marker* psbMarker, int MarkerCnt)
 			midpointPair.pointA = calcMidpoint(pointPairA.pointA, pointPairB.pointA);
 			midpointPair.pointB = calcMidpoint(pointPairA.pointB, pointPairB.pointB);
 
-			//cv::line(debugImage, midpointPair.pointA, midpointPair.pointB, Scalar(0, 255, 0), 2);
+			cv::line(debugImage, midpointPair.pointA, midpointPair.pointB, Scalar(0, 255, 0), 2);
 
 			minDistanceA = 1920;
 			minDistanceB = 1920;
@@ -242,36 +269,48 @@ vector<Marker> Locator::findMarkerPairNew(Marker* psbMarker, int MarkerCnt)
 			uchar crtPixel = 255;
 			vector<int> timingCounter;
 			int crtTimingCounter = 0;
+			int timingBuffer = 0;
 
 			for (int x = 0; x < timingPatternIt.count; x++)
 			{
 				//cout << "  " << (int)**timingPatternIt << endl;
-				timingPatternIt++;
+
 				if (fabs((uchar)**timingPatternIt - crtPixel) <= 127)
 				{
 					crtTimingCounter++;
+					timingBuffer = 0;
 				}
 				else
 				{
-					timingCounter.push_back(++crtTimingCounter);
-					crtTimingCounter = 0;
-					crtPixel = fabs(crtPixel - 255);
-				}
-			}
+					crtTimingCounter++;
+					timingBuffer++;
 
-			/*for (int x = 0; x < timingCounter.size(); x++)
-			{
-				cout << timingCounter[x] << "   ";
+					if (timingBuffer >= 3)
+					{				
+						timingCounter.push_back(crtTimingCounter - timingBuffer);
+						crtTimingCounter = timingBuffer;
+						crtPixel = fabs(crtPixel - 255);
+						timingBuffer = 0;
+					}
+				}
+
+				timingPatternIt++;
 			}
-			cout << endl;*/
+			timingCounter.push_back(crtTimingCounter - timingBuffer);
 
 			if (timingCounter.size() == 5)
 			{
+				for (int x = 0; x < timingCounter.size(); x++)
+				{
+				cout << timingCounter[x] << "   ";
+				}
+				cout << endl;
+
 				int ratio[5];
 
 				for (int x = 0; x < 5; x++)
 				{
-					ratio[x] = static_cast<int>((float)timingCounter[x] / ((float)timingCounter[2] / 25.0f * 35.0f) + 0.5f);
+					ratio[x] = static_cast<int>((float)timingCounter[x] / ((float)timingPatternIt.count / 165.0f * 35.0f) + 0.5f);
 				}
 
 				if (ratio[0] == 1 && ratio[1] == 1 && ratio[3] == 1 && ratio[4] == 1)
