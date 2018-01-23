@@ -101,7 +101,7 @@ Signal Locator::locate(Mat &img)
 		}
 	}
 
-	markerPair = findMarkerPairNew(psbMarker, psbMarkerCnt);
+	markerPair = findMarkerPair(psbMarker, psbMarkerCnt);
 
 	dstSignal = getSignal(markerPair);
 
@@ -110,28 +110,145 @@ Signal Locator::locate(Mat &img)
 	return dstSignal;
 }
 
-//从可能的Marker里面找出最终的Marker对
+//从可能的 Marker 里面找出最终的 Marker 对
 vector<Marker> Locator::findMarkerPair(Marker* psbMarker, int MarkerCnt)
 {
 	vector<Marker> markerPair;
-	markerPair.erase(markerPair.begin(), markerPair.end());
 
-	if (MarkerCnt < 2)
+	//用于判断Marker顶边四点共线
+	Point2f vectorA;
+	Point2f vectorB;
+	Point2f vectorC;
+	float sharpAngleA;
+	float sharpAngleB;
+
+	//用于寻找两个Marker距离最短的两个点对，然后找到同一Marker中两点中点的连线
+	Point markerAPoint1;
+	Point markerBPoint1;
+	Point markerAPoint2;
+	Point markerBPoint2;
+	Point markerAPointMid;
+	Point markerBPointMid;
+	float crtDistance;
+	float minDistanceA = 9999;
+	float minDistanceB = 9999;
+
+	//遍历任意两个Marker
+	for (int i = 0; i < MarkerCnt; i++)
 	{
-		return markerPair;
-	}
-	else
-	{
-		for (int i = 0; i < 2; i++)
+		for (int j = i + 1; j < MarkerCnt; j++)
 		{
-			markerPair.push_back(psbMarker[i]);
+			//检查两个Marker的顶边是否在同一条直线上（四点共线）
+			vectorA.x = static_cast<float>(psbMarker[i].cornerRightTop.x - psbMarker[i].cornerLeftTop.x);
+			vectorA.y = static_cast<float>(psbMarker[i].cornerRightTop.y - psbMarker[i].cornerLeftTop.y);
+
+			vectorB.x = static_cast<float>(psbMarker[j].cornerRightTop.x - psbMarker[j].cornerLeftTop.x);
+			vectorB.y = static_cast<float>(psbMarker[j].cornerRightTop.y - psbMarker[j].cornerLeftTop.y);
+
+			vectorC.x = static_cast<float>(psbMarker[j].cornerLeftTop.x - psbMarker[i].cornerLeftTop.x);
+			vectorC.y = static_cast<float>(psbMarker[j].cornerLeftTop.y - psbMarker[i].cornerLeftTop.y);
+
+			sharpAngleA = calcSharpAngle(vectorA, vectorC);
+			sharpAngleB = calcSharpAngle(vectorB, vectorC);
+
+			if (sharpAngleA >= Pi / 12.0f || sharpAngleA >= Pi / 12.0f)
+			{
+				continue;
+			}
+
+			//求两Marker中距离最短的两个点对
+			for (int m = 0; m < 4; m++)
+			{
+				for (int n = 0; n < 4; n++)
+				{
+					crtDistance = calcDistance(psbMarker[i][m], psbMarker[j][n]);
+					if (crtDistance < minDistanceB)
+					{
+						if (crtDistance < minDistanceA)
+						{
+							minDistanceB = minDistanceA;
+							minDistanceA = crtDistance;
+
+							markerBPoint1 = markerAPoint1;
+							markerBPoint2 = markerAPoint2;
+							markerAPoint1 = psbMarker[i][m];
+							markerAPoint2 = psbMarker[j][n];
+						}
+						else
+						{
+							minDistanceB = crtDistance;
+
+							markerBPoint1 = psbMarker[i][m];
+							markerBPoint2 = psbMarker[j][n];
+						}
+					}
+				}
+			}
+			markerAPointMid = calcMidpoint(markerAPoint1, markerBPoint1);
+			markerBPointMid = calcMidpoint(markerAPoint2, markerBPoint2);
+
+			minDistanceA = 9999;
+			minDistanceB = 9999;
+
+			//中点连线的线迭代器，用于遍历像素以找出线段上的像素关系
+			LineIterator timingPatternIt(preProcImage, markerAPointMid, markerBPointMid);
+			uchar crtPixel = 255;
+			vector<int> timingCounter;
+			int crtTimingCounter = 0;
+			int timingBuffer = 0;
+
+			//用线迭代器进行迭代，将每一像素段像素的数量进行存储
+			for (int x = 0; x < timingPatternIt.count; x++)
+			{
+				if (abs((uchar)**timingPatternIt - crtPixel) <= 127)
+				{
+					crtTimingCounter++;
+					timingBuffer = 0;
+				}
+				else
+				{
+					crtTimingCounter++;
+					timingBuffer++;
+
+					if (timingBuffer >= 3)
+					{
+						timingCounter.push_back(crtTimingCounter - timingBuffer);
+						crtTimingCounter = timingBuffer;
+						crtPixel = abs(crtPixel - 255);
+						timingBuffer = 0;
+					}
+				}
+
+				timingPatternIt++;
+			}
+			timingCounter.push_back(crtTimingCounter - timingBuffer);
+
+			//检查 0 1 3 4 号像素块的比例是否符合1：1：1：1
+			if (timingCounter.size() == 5)
+			{
+				int ratio[5];
+
+				for (int x = 0; x < 5; x++)
+				{
+					ratio[x] = static_cast<int>((float)timingCounter[x] / ((float)timingPatternIt.count / 165.0f * 35.0f) + 0.5f);
+				}
+
+				if (ratio[0] == 1 && ratio[1] == 1 && ratio[3] == 1 && ratio[4] == 1)
+				{
+					cv::line(debugImage, markerAPointMid, markerBPointMid, Scalar(0, 255, 0), 2);
+
+					markerPair.push_back(psbMarker[i]);
+					markerPair.push_back(psbMarker[j]);
+
+					return markerPair;
+				}
+			}
 		}
 	}
-
 	return markerPair;
 }
 
-//从三个marker的信息中获取Signal
+//从两个Marker的信息中获取Signal
 Signal Locator::getSignal(vector<Marker> markerPair)
 {
 	//要找的目标Signal
@@ -184,148 +301,4 @@ Signal Locator::getSignal(vector<Marker> markerPair)
 	}
 
 	return crtSignal;
-}
-
-//从可能的 Marker 里面找出最终的 Marker 对
-vector<Marker> Locator::findMarkerPairNew(Marker* psbMarker, int MarkerCnt)
-{
-	vector<Marker> markerPair;
-
-	//用于判断Marker顶边四点共线
-	Point2f vectorA;
-	Point2f vectorB;
-	Point2f vectorC;
-	float sharpAngleA;
-	float sharpAngleB;
-
-	PointPair pointPairA;
-	PointPair pointPairB;
-	PointPair midpointPair;
-
-	float crtDistance;
-	float minDistanceA = 9999;
-	float minDistanceB = 9999;
-	
-	//遍历任意两个Marker
-	for (int i = 0; i < MarkerCnt; i++)
-	{
-		for (int j = i + 1; j < MarkerCnt; j++)
-		{
-			//检查两个Marker的顶边是否在同一条直线上（四点共线）
-			vectorA.x = static_cast<float>(psbMarker[i].cornerRightTop.x - psbMarker[i].cornerLeftTop.x);
-			vectorA.y = static_cast<float>(psbMarker[i].cornerRightTop.y - psbMarker[i].cornerLeftTop.y);
-
-			vectorB.x = static_cast<float>(psbMarker[j].cornerRightTop.x - psbMarker[j].cornerLeftTop.x);
-			vectorB.y = static_cast<float>(psbMarker[j].cornerRightTop.y - psbMarker[j].cornerLeftTop.y);
-
-			vectorC.x = static_cast<float>(psbMarker[j].cornerLeftTop.x - psbMarker[i].cornerLeftTop.x);
-			vectorC.y = static_cast<float>(psbMarker[j].cornerLeftTop.y - psbMarker[i].cornerLeftTop.y);
-
-			sharpAngleA = calcSharpAngle(vectorA, vectorC);
-			sharpAngleB = calcSharpAngle(vectorB, vectorC);
-
-			if (sharpAngleA >= Pi / 12.0f || sharpAngleA >= Pi / 12.0f)
-			{
-				continue;
-			}
-			
-			//
-			for (int m = 0; m < 4; m++)
-			{
-				for (int n = 0; n < 4; n++)
-				{
-					crtDistance = calcDistance(psbMarker[i][m], psbMarker[j][n]);
-					if (crtDistance < minDistanceB)
-					{
-						if (crtDistance < minDistanceA)
-						{
-							minDistanceB = minDistanceA;
-							minDistanceA = crtDistance;
-
-							pointPairB.pointA = pointPairA.pointA;
-							pointPairB.pointB = pointPairA.pointB;
-							pointPairA.pointA = psbMarker[i][m];
-							pointPairA.pointB = psbMarker[j][n];
-						}
-						else
-						{
-							minDistanceB = crtDistance;
-
-							pointPairB.pointA = psbMarker[i][m];
-							pointPairB.pointB = psbMarker[j][n];
-						}
-					}
-				}
-			}
-			midpointPair.pointA = calcMidpoint(pointPairA.pointA, pointPairB.pointA);
-			midpointPair.pointB = calcMidpoint(pointPairA.pointB, pointPairB.pointB);
-
-			cv::line(debugImage, midpointPair.pointA, midpointPair.pointB, Scalar(0, 255, 0), 2);
-
-			minDistanceA = 1920;
-			minDistanceB = 1920;
-
-			LineIterator timingPatternIt(preProcImage, midpointPair.pointA, midpointPair.pointB);
-			uchar crtPixel = 255;
-			vector<int> timingCounter;
-			int crtTimingCounter = 0;
-			int timingBuffer = 0;
-
-			for (int x = 0; x < timingPatternIt.count; x++)
-			{
-				//cout << "  " << (int)**timingPatternIt << endl;
-
-				if (fabs((uchar)**timingPatternIt - crtPixel) <= 127)
-				{
-					crtTimingCounter++;
-					timingBuffer = 0;
-				}
-				else
-				{
-					crtTimingCounter++;
-					timingBuffer++;
-
-					if (timingBuffer >= 3)
-					{				
-						timingCounter.push_back(crtTimingCounter - timingBuffer);
-						crtTimingCounter = timingBuffer;
-						crtPixel = fabs(crtPixel - 255);
-						timingBuffer = 0;
-					}
-				}
-
-				timingPatternIt++;
-			}
-			timingCounter.push_back(crtTimingCounter - timingBuffer);
-
-			if (timingCounter.size() == 5)
-			{
-				for (int x = 0; x < timingCounter.size(); x++)
-				{
-				cout << timingCounter[x] << "   ";
-				}
-				cout << endl;
-
-				int ratio[5];
-
-				for (int x = 0; x < 5; x++)
-				{
-					ratio[x] = static_cast<int>((float)timingCounter[x] / ((float)timingPatternIt.count / 165.0f * 35.0f) + 0.5f);
-				}
-
-				if (ratio[0] == 1 && ratio[1] == 1 && ratio[3] == 1 && ratio[4] == 1)
-				{
-					cv::line(debugImage, midpointPair.pointA, midpointPair.pointB, Scalar(255, 0, 255), 2);
-
-					markerPair.push_back(psbMarker[i]);
-					markerPair.push_back(psbMarker[j]);
-
-					//waitKey();
-
-					return markerPair;
-				}
-			}
-		}
-	}
-	return markerPair;
 }

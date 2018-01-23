@@ -34,12 +34,6 @@ typedef struct
 
 typedef struct
 {
-	Point pointA;
-	Point pointB;
-}PointPair;
-
-typedef struct
-{
 	Mat image;
 	bool lable;      //检测到Signal则lable置true，否则置false
 }Signal;
@@ -57,9 +51,7 @@ private:
 	//从可能的Marker里面找出最终的Marker对
 	vector<Marker> findMarkerPair(Marker* psbMarker, int MarkerCnt);
 
-	vector<Marker> findMarkerPairNew(Marker* psbMarker, int MarkerCnt);
-
-	//从marker对的信息中获取目标Signal
+	//从Marker对的信息中获取目标Signal
 	Signal getSignal(vector<Marker> markerPair);
 
 	//两点间距离计算
