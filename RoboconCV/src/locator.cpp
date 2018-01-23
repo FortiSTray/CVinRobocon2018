@@ -197,7 +197,7 @@ vector<Marker> Locator::findMarkerPair(Marker* psbMarker, int MarkerCnt)
 			int crtTimingCounter = 0;
 			int timingBuffer = 0;
 
-			//用线迭代器进行迭代，将每一像素段像素的数量进行存储
+			//用线迭代器进行迭代，将每一像素段的像素数量进行存储
 			for (int x = 0; x < timingPatternIt.count; x++)
 			{
 				if (abs((uchar)**timingPatternIt - crtPixel) <= 127)
@@ -226,6 +226,12 @@ vector<Marker> Locator::findMarkerPair(Marker* psbMarker, int MarkerCnt)
 			//检查 0 1 3 4 号像素块的比例是否符合1：1：1：1
 			if (timingCounter.size() == 5)
 			{
+				for (int p = 0; p < timingCounter.size(); p++)
+				{
+					cout << timingCounter[p] << "  ";
+				}
+				cout << endl;
+				
 				int ratio[5];
 
 				for (int x = 0; x < 5; x++)

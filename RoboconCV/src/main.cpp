@@ -17,21 +17,19 @@
 using namespace std;
 using namespace cv;
 
+////单摄像头调试模式
+//#define SINGLE_CAMERA_MODE
+
 #define CAMERA_NEAR 0
 #define CAMERA_FAR  1
 
 BOOL            m_bExit = FALSE;		//用来通知图像抓取线程结束
+CameraHandle    m_hCamera;              //单相机模式时相机句柄
 CameraHandle    m_hCameraNear;		    //近焦相机句柄
 CameraHandle    m_hCameraFar;		    //远焦相机句柄
 BYTE*           m_pFrameBuffer;         //用于将原始图像数据转换为RGB的缓冲区
 tSdkFrameHead   m_sFrInfo;		        //用于保存当前图像帧的帧头信息
-
-//int	            m_iDispFrameNum;	//用于记录当前已经显示的图像帧的数量
-//float           m_fDispFps;			//显示帧率
-//float           m_fCapFps;			//捕获帧率
-//tSdkFrameStatistic  m_sFrameCount;
-//tSdkFrameStatistic  m_sFrameLast;
-//int					m_iTimeLast;
+char		    g_CameraName[64];
 
 //类的实例化
 Locator CrtLocator;
@@ -44,6 +42,13 @@ ComputeTime FPSOutput;
 
 int main(int argc, char* argv[])
 {
+#ifdef SINGLE_CAMERA_MODE
+
+	tSdkCameraDevInfo sCameraList[1];
+	INT iCameraNums;
+
+#endif
+
 	CameraSdkStatus status;
 	tSdkCameraCapbility sCameraInfo;
 
@@ -54,9 +59,56 @@ int main(int argc, char* argv[])
 	bool getImageBufferFlag = false;
 	int keyStatus = 0;
 
+#ifdef SINGLE_CAMERA_MODE
+
+	//枚举设备，获得设备列表
+	iCameraNums = 1;
+
+	if (CameraEnumerateDevice(sCameraList, &iCameraNums) != CAMERA_STATUS_SUCCESS || iCameraNums == 0)
+	{
+		printf("W...Where's my camera? QAQ\n");
+		return FALSE;
+	}
+
+	if ((status = CameraInit(&sCameraList[0], -1, -1, &m_hCamera)) != CAMERA_STATUS_SUCCESS)
+	{
+		char msg[128];
+		sprintf_s(msg, "Failed to init the camera! Error code is %d\n", status);
+		printf(msg);
+		printf(CameraGetErrorString(status));
+		return FALSE;
+	}
+
+	//根据安装方式设置源图像镜像操作
+	CameraSetMirror(m_hCamera, 0, FALSE);
+	CameraSetMirror(m_hCamera, 1, TRUE);
+
+	//获得该相机的特性描述
+	CameraGetCapability(m_hCamera, &sCameraInfo);
+
+	m_pFrameBuffer = (BYTE *)CameraAlignMalloc(sCameraInfo.sResolutionRange.iWidthMax*sCameraInfo.sResolutionRange.iWidthMax * 3, 16);
+
+	if (sCameraInfo.sIspCapacity.bMonoSensor)
+	{
+		CameraSetIspOutFormat(m_hCamera, CAMERA_MEDIA_TYPE_MONO8);
+	}
+
+	strcpy_s(g_CameraName, sCameraList[0].acFriendlyName);
+
+	//通知SDK内部建该相机的属性页面
+	CameraCreateSettingPage(m_hCamera, NULL, g_CameraName, NULL, NULL, 0);
+
+	//进入工作模式开始采集图像
+	CameraPlay(m_hCamera);
+
+	//TRUE显示相机配置界面。FALSE则隐藏。
+	CameraShowSettingPage(m_hCamera, TRUE);//TRUE显示相机配置界面。FALSE则隐藏。
+
+#else
+
 	if (CameraEnumerateDeviceEx() == 0)
 	{
-		printf("Where's my camera? (ﾟДﾟ≡ﾟдﾟ)!?\n");
+		printf("W...Where's my camera? QAQ\n");
 		return FALSE;
 	}
 	
@@ -107,9 +159,27 @@ int main(int argc, char* argv[])
 	CameraShowSettingPage(m_hCameraNear, TRUE);
 	CameraShowSettingPage(m_hCameraFar , TRUE);
 
+#endif
+
 	//主循环
 	while (!m_bExit)
 	{
+#ifdef SINGLE_CAMERA_MODE
+
+		if (CameraGetImageBuffer(m_hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
+		{
+			//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
+			status = CameraImageProcess(m_hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+
+			getImageBufferFlag = true;
+		}
+		else
+		{
+			getImageBufferFlag = false;
+		}
+
+#else
+
 		if (cameraSelect == CAMERA_NEAR)
 		{
 			if (CameraGetImageBuffer(m_hCameraNear, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
@@ -138,6 +208,8 @@ int main(int argc, char* argv[])
 				getImageBufferFlag = false;
 			}
 		}
+
+#endif
 
 		if (getImageBufferFlag == true)
 		{
@@ -192,6 +264,14 @@ int main(int argc, char* argv[])
 				*/
 			}
 
+#ifdef SINGLE_CAMERA_MODE
+
+			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
+			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
+			CameraReleaseImageBuffer(m_hCamera, pbyBuffer);
+
+#else
+
 			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
 			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
 			if (cameraSelect == CAMERA_NEAR)
@@ -202,6 +282,8 @@ int main(int argc, char* argv[])
 			{
 				CameraReleaseImageBuffer(m_hCameraFar, pbyBuffer);
 			}
+
+#endif
 
 			memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
 		}
@@ -219,8 +301,16 @@ int main(int argc, char* argv[])
 		}
 	}
 
+#ifdef SINGLE_CAMERA_MODE
+
+	CameraUnInit(m_hCamera);
+
+#else
+
 	CameraUnInit(m_hCameraNear);
 	CameraUnInit(m_hCameraFar );
+
+#endif
 
 	CameraAlignFree(m_pFrameBuffer);
 
