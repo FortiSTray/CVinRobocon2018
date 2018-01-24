@@ -17,8 +17,8 @@
 using namespace std;
 using namespace cv;
 
-////单摄像头调试模式
-//#define SINGLE_CAMERA_MODE
+//单摄像头调试模式
+#define SINGLE_CAMERA_MODE
 
 #define CAMERA_NEAR 0
 #define CAMERA_FAR  1
@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
 	CameraSdkStatus status;
 	tSdkCameraCapbility sCameraInfo;
 
-	tSdkFrameHead 	sFrameInfo;
-	BYTE*			pbyBuffer;
+	tSdkFrameHead sFrameInfo;
+	BYTE* pbyBuffer;
 
 	bool cameraSelect = CAMERA_NEAR;
 	bool getImageBufferFlag = false;

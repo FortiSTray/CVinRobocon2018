@@ -46,7 +46,13 @@ Signal Locator::locate(Mat &img)
 			num = hierarchy[num][2];
 			layerCounter++;
 
-			if (layerCounter == 2)
+			if (layerCounter == 1)
+			{
+				//检查此层级轮廓数量是否 == 1
+				if (hierarchy[num][0] != -1) { continue; }
+			}
+
+			if (layerCounter == 2 && hierarchy[num][2] == -1)
 			{
 				//检查此层级轮廓数量是否 == 2
 				if (hierarchy[num][0] == -1) { continue; }
@@ -56,7 +62,7 @@ Signal Locator::locate(Mat &img)
 
 				//多边形拟合找出四边形的轮廓
 				vector<Point> vertex;
-				approxPolyDP(contours[i], vertex, 5, true);
+				approxPolyDP(contours[i], vertex, 4, true);
 				if (vertex.size() != 4) { continue; }
 
 				drawContours(debugImage, contours, static_cast<int>(i), Scalar(255, 0, 0), 2, 8);
@@ -226,11 +232,11 @@ vector<Marker> Locator::findMarkerPair(Marker* psbMarker, int MarkerCnt)
 			//检查 0 1 3 4 号像素块的比例是否符合1：1：1：1
 			if (timingCounter.size() == 5)
 			{
-				for (int p = 0; p < timingCounter.size(); p++)
+				/*for (uint p = 0; p < timingCounter.size(); p++)
 				{
 					cout << timingCounter[p] << "  ";
 				}
-				cout << endl;
+				cout << endl;*/
 				
 				int ratio[5];
 
