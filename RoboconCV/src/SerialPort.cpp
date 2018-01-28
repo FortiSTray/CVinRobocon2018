@@ -417,7 +417,7 @@ bool CSerialPort::WriteData(unsigned char* pData, unsigned int length)
 }
 
 //状态全局变量get & set
-int tmpTaskStatus;
+int tmpTaskStatus = INITIALIZE;
 void setTaskStatus(int status)
 {
 	tmpTaskStatus = status;

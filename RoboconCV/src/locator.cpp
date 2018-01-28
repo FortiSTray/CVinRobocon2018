@@ -38,7 +38,7 @@ Signal Locator::locate(Mat &img)
 		if (area < 100) { continue; }
 
 		//统计轮廓层次
-		int num = i;
+		int num = static_cast<int>(i);
 		int layerCounter = 0;
 
 		while (hierarchy[num][2] != -1)

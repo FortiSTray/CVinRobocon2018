@@ -68,6 +68,10 @@ int main(int argc, char* argv[])
 	if (!CrtSerialPort.InitPort(serialPortNumber))
 	{
 		std::cout << "Serial port " << serialPortNumber << " init failed." << std::endl;
+	}
+	else
+	{
+		std::cout << "Serial port " << serialPortNumber << " init succeed." << std::endl;
 
 		if (!CrtSerialPort.OpenListenThread())
 		{
@@ -77,10 +81,6 @@ int main(int argc, char* argv[])
 		{
 			std::cout << "Open serial port listening thread succeed." << std::endl;
 		}
-	}
-	else
-	{
-		std::cout << "Serial port " << serialPortNumber << " init succeed." << std::endl;
 	}
 
 #endif //DISABLE_SERIAL_SEND
@@ -193,7 +193,8 @@ int main(int argc, char* argv[])
 	                                              Main Loop
 	==========================================================================================================
 	*/
-	int taskStatus = INITIALIZE;
+	int taskStatus = INIT_DONE;
+	setTaskStatus(INIT_DONE);
 	int timeSleepMs = 0;
 	while (!m_bExit)
 	{
