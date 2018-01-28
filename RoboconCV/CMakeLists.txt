@@ -7,8 +7,8 @@ project(${PROJ_NAME})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
-FILE(GLOB HEADER_LIST "src/*.h"   "src/SerialPort/*.h"  )
-FILE(GLOB SOURCE_LIST "src/*.cpp" "src/SerialPort/*.cpp")
+FILE(GLOB HEADER_LIST "${CMAKE_SOURCE_DIR}/src/*.h")
+FILE(GLOB SOURCE_LIST "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 add_executable(${PROJ_NAME} ${SOURCE_LIST} ${HEADER_LIST})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJ_NAME})
@@ -25,6 +25,9 @@ endif()
 # Camera Driver
 include_directories(${CMAKE_SOURCE_DIR}/MindVisionAPI/Include)
 target_link_libraries(${PROJ_NAME} ${CMAKE_SOURCE_DIR}/MindVisionAPI/Library/MVCAMSDK.lib)
+
+# 识别为c++代码
+set_target_properties(${PROJ_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 # 多核处理
 set_target_properties(${PROJ_NAME} PROPERTIES COMPILE_FLAGS "/MP")

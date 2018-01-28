@@ -17,10 +17,17 @@
 ///  修订说明：  
 //////////////////////////////////////////////////////////////////////////  
 
-#ifndef SERIALPORT_H_  
-#define SERIALPORT_H_  
+#ifndef _SERIAL_PORT_H 
+#define _SERIAL_PORT_H
 
 #include <Windows.h>  
+
+//status状态宏定义
+#define INITIALIZE      0
+#define INIT_DONE       1
+#define SUSPEND_BOTH    2
+#define OPEN_NEAR       3
+#define OPEN_FAR        4
 
 /** 串口通信类
 *
@@ -28,10 +35,6 @@
 *  例如监听发到指定串口的数据、发送指定数据到串口
 */
 
-char GetColorReco(void);
-int GetSelf_che_signal(void);
-
-int GetSeeManyPlats(void);
 class CSerialPort
 {
 public:
@@ -162,4 +165,8 @@ private:
 
 };
 
-#endif //SERIALPORT_H_ 
+//状态全局变量get & set
+void setTaskStatus(int status);
+int getTaskStatus(void);
+
+#endif //!_SERIAL_PORT_H 

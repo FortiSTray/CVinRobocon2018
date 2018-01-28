@@ -18,16 +18,16 @@
 ///  修订说明：  
 //////////////////////////////////////////////////////////////////////////  
 
-#include "SerialPort.h"  
+#include "SerialPort.h"
 #include <process.h>  
-#include <iostream>  
+#include <iostream> 
+
 /** 线程退出标志 */
 bool CSerialPort::s_bExit = false;
-/** 当串口无数据时,sleep至下次查询间隔的时间,单位:秒 */
+/** 当串口无数据时,sleep至下次查询间隔的时间,单位:毫秒 */
 const UINT SLEEP_TIME_INTERVAL = 5;
 
-CSerialPort::CSerialPort(void)
-	: m_hListenThread(INVALID_HANDLE_VALUE)
+CSerialPort::CSerialPort(void) : m_hListenThread(INVALID_HANDLE_VALUE)
 {
 	m_hComm = INVALID_HANDLE_VALUE;
 	m_hListenThread = INVALID_HANDLE_VALUE;
@@ -84,24 +84,7 @@ bool CSerialPort::InitPort(UINT portNo /*= 1*/, UINT baud /*= CBR_9600*/, char p
 	}
 
 	DCB  dcb;
-	//if (bIsSuccess)
-	//{
-	//	// 将ANSI字符串转换为UNICODE字符串  
-	//	DWORD dwNum = MultiByteToWideChar(CP_ACP, 0, szDCBparam, -1, NULL, 0);
-	//	wchar_t *pwText = new wchar_t[dwNum];
-	//	if (!MultiByteToWideChar(CP_ACP, 0, szDCBparam, -1, pwText, dwNum))
-	//	{
-	//		bIsSuccess = TRUE;
-	//	}
-
-	//	/** 获取当前串口配置参数,并且构造串口DCB参数 */
-	//	bIsSuccess = GetCommState(m_hComm, &dcb) && BuildCommDCB(pwText, &dcb);
-	//	/** 开启RTS flow控制 */
-	//	dcb.fRtsControl = RTS_CONTROL_ENABLE;
-
-	//	/** 释放内存空间 */
-	//	delete[] pwText;
-	//}
+	
 	if (bIsSuccess)
 	{
 		// 将ANSI字符串转换为UNICODE字符串
@@ -264,34 +247,8 @@ UINT CSerialPort::GetBytesInCOM()
 	return BytesInQue;
 }
 
-static int start_signal = 0;
-static int contius = 0;
-static char color_recog = 0;
-static int self_che_signal = 0;
-
-int GetSelf_che_signal(void)
-{
-	return self_che_signal;
-}
-char GetColorReco(void)
-{
-	return color_recog;
-}
-int gang_push_time = 0;
-
-#ifdef DEBUG_MODE
-int car_stop = 1;
-#else 
-int car_stop = 0;
-#endif
-
-int car_stop_move = 1;
-int task_ball_plat_over = 0;
-static int Near_or_all = 0;
-int GetSeeManyPlats(void)
-{
-	return Near_or_all;
-}
+int serialStatus = 0;
+int serialMessage = -1;
 UINT WINAPI CSerialPort::ListenThread(void* pParam)
 {
 	/** 得到本类的指针 */
@@ -315,92 +272,80 @@ UINT WINAPI CSerialPort::ListenThread(void* pParam)
 			cRecved = 0x00;
 			if (pSerialPort->ReadChar(cRecved) == true)
 			{
-				std::cout <<"qiang"<< cRecved<< std::endl;
-				if (cRecved == 'c')
-				{
-					car_stop = 1;
-				}
-				if (cRecved == 'd')
-				{
-					car_stop_move = 1;
-				}
-				if (cRecved == 's')
-				{
-					task_ball_plat_over = 1;
-				}
-				switch (contius)
+				switch (serialStatus)
 				{
 				case 0:
-					if (cRecved == 'a')
-					{
-						contius = 1;
-					}
-					else if (cRecved == 'e')
-					{
-						contius = 3;
-					}
-					else if (cRecved == 'z')
-					{
-						contius = 5;
-					}
+					if (cRecved == 'A') { serialStatus = 1; }
 					break;
+
 				case 1:
-					if (cRecved == 'a')
+					if (cRecved == 'T')
 					{
-						contius = 2;
+						if (getTaskStatus() == INIT_DONE) { serialStatus = 4; }
+						else if (getTaskStatus() == OPEN_NEAR || getTaskStatus() == OPEN_FAR || getTaskStatus() == SUSPEND_BOTH)
+						{
+							serialStatus = 2;
+						}
+						else { serialStatus = 0; }
 					}
-					else
-					{
-						contius = 0;
-					}					
+					else { serialStatus = 0; }
 					break;
+
 				case 2:
-					color_recog = cRecved;
-					contius = 0;
+					if (cRecved == '+') { serialStatus = 3; }
+					else { serialStatus = 0; }
 					break;
+
 				case 3:
-					if (cRecved == 'e')
+					if (cRecved == '0')
 					{
-						contius = 4;
+						serialMessage = 0;
+						serialStatus = 4;
 					}
-					else
+					else if (cRecved == '1')
 					{
-						contius = 0;
+						serialMessage = 1;
+						serialStatus = 4;
 					}
+					else if (cRecved == '2')
+					{
+						serialMessage = 2;
+						serialStatus = 4;
+					}
+					else { serialStatus = 0; }
 					break;
+
 				case 4:
-					if (cRecved == 's')
-					{
-						Near_or_all = 1;
-					}
-					else if (cRecved == 'p')
-					{
-						Near_or_all = 5;
-					}
-					else
-					{
-						std::cout << "see plat many error" << std::endl;
-					}
-					contius = 0;
+					if (cRecved == '\r') { serialStatus = 5; }
+					else { serialStatus = 0; }
 					break;
+
 				case 5:
-					if (cRecved == 'z')
-					{
-						self_che_signal = 1;
+					if (cRecved == '\n')
+					{ 
+						if (getTaskStatus() == INIT_DONE) { setTaskStatus(SUSPEND_BOTH); }
+						else if ((getTaskStatus() == OPEN_NEAR || getTaskStatus() == OPEN_FAR) && serialMessage == 0)
+						{
+							setTaskStatus(SUSPEND_BOTH);
+						}
+						else if ((getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_FAR) && serialMessage == 1)
+						{
+							setTaskStatus(OPEN_NEAR);
+						}
+						else if ((getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_NEAR) && serialMessage == 2)
+						{
+							setTaskStatus(OPEN_FAR);
+						}
+						else {}
 					}
-					contius = 0;
+					else {}
+
+					serialStatus = 0;
 					break;
-				case 6:
-					if (cRecved == 'z')
-					{
-						self_che_signal = 1;
-					}
-					contius = 0;
-					break;
-				default :
+
+				default:
 					break;
 				}
-				continue;
 			}
 		} while (--BytesInQue);
 	}
@@ -469,4 +414,15 @@ bool CSerialPort::WriteData(unsigned char* pData, unsigned int length)
 	LeaveCriticalSection(&m_csCommunicationSync);
 
 	return true;
+}
+
+//状态全局变量get & set
+int tmpTaskStatus;
+void setTaskStatus(int status)
+{
+	tmpTaskStatus = status;
+}
+int getTaskStatus(void)
+{
+	return tmpTaskStatus;
 }

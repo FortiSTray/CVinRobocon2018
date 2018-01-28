@@ -6,19 +6,17 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
-#include <process.h>
 #include "Windows.h"
 #include "opencv2\opencv.hpp"
 #include "CameraApi.h"
 #include "locator.h"
 #include "decoder.h"
+#include "SerialPort.h"
 #include "computeTime.h"
+#include "modeConfig.h"
 
 using namespace std;
 using namespace cv;
-
-//单摄像头调试模式
-#define SINGLE_CAMERA_MODE
 
 #define CAMERA_NEAR 0
 #define CAMERA_FAR  1
@@ -34,20 +32,24 @@ char		    g_CameraName[64];
 //类的实例化
 Locator CrtLocator;
 Decoder CrtDecoder;
+CSerialPort CrtSerialPort;
 ComputeTime FPSOutput;
 
-//用于Debug图像输出
-//char fileName[32];
-//int fileSerial = 0;
+#ifdef IMWRITE_DEBUG_IMAGE
+
+char fileName[32];
+int fileSerial = 0;
+
+#endif //IMWRITE_DEBUG_IMAGE
 
 int main(int argc, char* argv[])
 {
-#ifdef SINGLE_CAMERA_MODE
+#ifdef SINGLE_CAMERA_DEBUG
 
 	tSdkCameraDevInfo sCameraList[1];
 	INT iCameraNums;
 
-#endif
+#endif //SINGLE_CAMERA_DEBUG
 
 	CameraSdkStatus status;
 	tSdkCameraCapbility sCameraInfo;
@@ -59,7 +61,31 @@ int main(int argc, char* argv[])
 	bool getImageBufferFlag = false;
 	int keyStatus = 0;
 
-#ifdef SINGLE_CAMERA_MODE
+#ifndef DISABLE_SERIAL_SEND
+
+	//初始化串口并打开监听线程
+	int serialPortNumber = 1;
+	if (!CrtSerialPort.InitPort(serialPortNumber))
+	{
+		std::cout << "Serial port " << serialPortNumber << " init failed." << std::endl;
+
+		if (!CrtSerialPort.OpenListenThread())
+		{
+			std::cout << "Open serial port listening thread failed." << std::endl;
+		}
+		else
+		{
+			std::cout << "Open serial port listening thread succeed." << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Serial port " << serialPortNumber << " init succeed." << std::endl;
+	}
+
+#endif //DISABLE_SERIAL_SEND
+
+#ifdef SINGLE_CAMERA_DEBUG
 
 	//枚举设备，获得设备列表
 	iCameraNums = 1;
@@ -159,12 +185,19 @@ int main(int argc, char* argv[])
 	CameraShowSettingPage(m_hCameraNear, TRUE);
 	CameraShowSettingPage(m_hCameraFar , TRUE);
 
-#endif
+#endif //SINGLE_CAMERA_DEBUG
 
-	//主循环
+
+	/*
+	==========================================================================================================
+	                                              Main Loop
+	==========================================================================================================
+	*/
+	int taskStatus = INITIALIZE;
+	int timeSleepMs = 0;
 	while (!m_bExit)
 	{
-#ifdef SINGLE_CAMERA_MODE
+#ifdef SINGLE_CAMERA_DEBUG
 
 		if (CameraGetImageBuffer(m_hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 		{
@@ -180,8 +213,25 @@ int main(int argc, char* argv[])
 
 #else
 
-		if (cameraSelect == CAMERA_NEAR)
+		taskStatus = getTaskStatus();
+		switch (taskStatus)
 		{
+		case INIT_DONE:
+			timeSleepMs = 50;
+			getImageBufferFlag = false;
+			cout << "Waiting for GayQiao's trigger signal. Sleep for " << timeSleepMs << "ms" << endl;
+			Sleep(timeSleepMs);
+			break;
+
+		case SUSPEND_BOTH:
+			timeSleepMs = 5;
+			getImageBufferFlag = false;
+			cout << "Suspending. Sleep for " << timeSleepMs << "ms" << endl;
+			Sleep(timeSleepMs);
+			break;
+
+		case OPEN_NEAR:
+			cameraSelect = CAMERA_NEAR;
 			if (CameraGetImageBuffer(m_hCameraNear, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 			{
 				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
@@ -193,9 +243,11 @@ int main(int argc, char* argv[])
 			{
 				getImageBufferFlag = false;
 			}
-		}
-		else
-		{
+
+			break;
+
+		case OPEN_FAR:
+			cameraSelect = CAMERA_FAR;
 			if (CameraGetImageBuffer(m_hCameraFar, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 			{
 				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
@@ -207,9 +259,14 @@ int main(int argc, char* argv[])
 			{
 				getImageBufferFlag = false;
 			}
+
+			break;
+
+		default:
+			break;
 		}
 
-#endif
+#endif //SINGLE_CAMERA_DEBUG
 
 		if (getImageBufferFlag == true)
 		{
@@ -225,7 +282,7 @@ int main(int argc, char* argv[])
 			{
 				/*
 				==========================================================================================================
-				                                              Main Task
+																Main Task
 				==========================================================================================================
 				*/
 
@@ -236,35 +293,47 @@ int main(int argc, char* argv[])
 				dstSignal = CrtLocator.locate(srcImage);
 				imshow("Signal", dstSignal.image);
 
-				/*if (waitKey(2) == ' ')
+#ifdef IMWRITE_DEBUG_IMAGE
+
+				if (waitKey(1) == ' ')
 				{
 					sprintf(fileName, "./data/data%d.jpg", fileSerial++);
 					if (fileSerial >= 99) { fileSerial--; }
 					imwrite(fileName, dstSignal.image);
-				}*/
+				}
 
+#endif
+
+				//输出得到的信息
 				int message = -1;
 				if (dstSignal.lable == true)
 				{
 					message = CrtDecoder.decode(dstSignal.image);
-					//cout << message << endl;
 				}
-				else
-				{
-					//cout << message << endl;
-				}
+				else {}
+				cout << message << endl;
 
+#ifndef DISABLE_SERIAL_SEND
+
+				uchar* pData = new uchar;
+				*pData = static_cast<uchar>(message);
+				CrtSerialPort.WriteData(pData, 1);
+				delete pData;
+
+#endif //DISABLE_SERIAL_SEND
+
+				//输出帧率
 				cout << FPSOutput.End() << endl;
 				FPSOutput.Begin();
 
 				/*
 				==========================================================================================================
-				                                                  End
+														      End Main Task
 				==========================================================================================================
 				*/
 			}
 
-#ifdef SINGLE_CAMERA_MODE
+#ifdef SINGLE_CAMERA_DEBUG
 
 			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
 			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
@@ -283,7 +352,7 @@ int main(int argc, char* argv[])
 				CameraReleaseImageBuffer(m_hCameraFar, pbyBuffer);
 			}
 
-#endif
+#endif //SINGLE_CAMERA_DEBUG
 
 			memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
 		}
@@ -295,13 +364,14 @@ int main(int argc, char* argv[])
 			m_bExit = TRUE;
 			break;
 		}
-		else if (keyStatus == ' ')
-		{
-			cameraSelect = !cameraSelect;
-		}
 	}
+	/*
+	==========================================================================================================
+	                                            End Main Loop
+	==========================================================================================================
+	*/
 
-#ifdef SINGLE_CAMERA_MODE
+#ifdef SINGLE_CAMERA_DEBUG
 
 	CameraUnInit(m_hCamera);
 
@@ -310,7 +380,7 @@ int main(int argc, char* argv[])
 	CameraUnInit(m_hCameraNear);
 	CameraUnInit(m_hCameraFar );
 
-#endif
+#endif //SINGLE_CAMERA_DEBUG
 
 	CameraAlignFree(m_pFrameBuffer);
 
