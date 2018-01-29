@@ -20,4 +20,4 @@ private:
 
 };  
 
-#endif
+#endif //_COMPUTE_TIME_H

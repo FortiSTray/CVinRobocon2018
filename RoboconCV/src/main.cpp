@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	bool getImageBufferFlag = false;
 	int keyStatus = 0;
 
-#ifndef DISABLE_SERIAL_SEND
+#ifndef DISABLE_SERIAL_PORT
 
 	//初始化串口并打开监听线程
 	int serialPortNumber = 1;
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-#endif //DISABLE_SERIAL_SEND
+#endif //DISABLE_SERIAL_PORT
 
 #ifdef SINGLE_CAMERA_DEBUG
 
@@ -109,6 +109,9 @@ int main(int argc, char* argv[])
 	CameraSetMirror(m_hCamera, 0, FALSE);
 	CameraSetMirror(m_hCamera, 1, TRUE);
 
+	//设置对比度
+	CameraSetContrast(m_hCamera, 100);
+
 	//获得该相机的特性描述
 	CameraGetCapability(m_hCamera, &sCameraInfo);
 
@@ -127,8 +130,17 @@ int main(int argc, char* argv[])
 	//进入工作模式开始采集图像
 	CameraPlay(m_hCamera);
 
+#ifdef IMSHOW_DEBUG_IMAGE
+
 	//TRUE显示相机配置界面。FALSE则隐藏。
 	CameraShowSettingPage(m_hCamera, TRUE);//TRUE显示相机配置界面。FALSE则隐藏。
+
+#else
+
+	//TRUE显示相机配置界面。FALSE则隐藏。
+	CameraShowSettingPage(m_hCamera, FALSE);//TRUE显示相机配置界面。FALSE则隐藏。
+
+#endif //IMSHOW_DEBUG_IMAGE
 
 #else
 
@@ -162,6 +174,10 @@ int main(int argc, char* argv[])
 	CameraSetMirror(m_hCameraFar , 0, TRUE );
 	CameraSetMirror(m_hCameraFar , 1, FALSE);
 
+	//设置对比度
+	CameraSetContrast(m_hCameraNear, 100);
+	CameraSetContrast(m_hCameraFar, 100);
+
 	//获得相机的特性描述，两个相机型号及硬件设置完全相同，所以只需要获取一台相机的信息
 	CameraGetCapability(m_hCameraNear, &sCameraInfo);
 
@@ -181,9 +197,19 @@ int main(int argc, char* argv[])
 	CameraPlay(m_hCameraNear);
 	CameraPlay(m_hCameraFar );
 
+#ifdef IMSHOW_DEBUG_IMAGE
+
 	//TRUE显示相机配置界面。FALSE则隐藏。
 	CameraShowSettingPage(m_hCameraNear, TRUE);
 	CameraShowSettingPage(m_hCameraFar , TRUE);
+
+#else
+
+	//TRUE显示相机配置界面。FALSE则隐藏。
+	CameraShowSettingPage(m_hCameraNear, FALSE);
+	CameraShowSettingPage(m_hCameraFar, FALSE);
+
+#endif //IMSHOW_DEBUG_IMAGE
 
 #endif //SINGLE_CAMERA_DEBUG
 
@@ -288,11 +314,15 @@ int main(int argc, char* argv[])
 				*/
 
 				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
+#ifdef IMSHOW_DEBUG_IMAGE
 				imshow("Original", srcImage);
+#endif //IMSHOW_DEBUG_IMAGE
 
 				Signal dstSignal;
 				dstSignal = CrtLocator.locate(srcImage);
+#ifdef IMSHOW_DEBUG_IMAGE
 				imshow("Signal", dstSignal.image);
+#endif //IMSHOW_DEBUG_IMAGE
 
 #ifdef IMWRITE_DEBUG_IMAGE
 
@@ -303,7 +333,7 @@ int main(int argc, char* argv[])
 					imwrite(fileName, dstSignal.image);
 				}
 
-#endif
+#endif //IMWRITE_DEBUG_IMAGE
 
 				//输出得到的信息
 				int message = -1;
@@ -314,14 +344,14 @@ int main(int argc, char* argv[])
 				else {}
 				cout << message << endl;
 
-#ifndef DISABLE_SERIAL_SEND
+#ifndef DISABLE_SERIAL_PORT
 
 				uchar* pData = new uchar;
 				*pData = static_cast<uchar>(message);
 				CrtSerialPort.WriteData(pData, 1);
 				delete pData;
 
-#endif //DISABLE_SERIAL_SEND
+#endif //DISABLE_SERIAL_PORT
 
 				//输出帧率
 				cout << FPSOutput.End() << endl;

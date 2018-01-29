@@ -169,4 +169,4 @@ private:
 void setTaskStatus(int status);
 int getTaskStatus(void);
 
-#endif //!_SERIAL_PORT_H 
+#endif //_SERIAL_PORT_H 

@@ -127,4 +127,4 @@ private:
 	//定位到的目标Signal
 	Signal dstSignal;
 };
-#endif
+#endif //_LOCATOR_H

@@ -47,4 +47,4 @@ private:
 	bool messageMDStatus;
 	bool messageRDStatus;
 };
-#endif
+#endif //_DECODER_H

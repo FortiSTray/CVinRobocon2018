@@ -1,5 +1,6 @@
 #include "decoder.h"
 #include "locator.h"
+#include "modeConfig.h"
 
 Decoder::Decoder(void)
 {
@@ -20,7 +21,9 @@ int Decoder::decode(Mat& img)
 
 	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
 	threshold(preProcImage, preProcImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+#ifdef IMSHOW_DEBUG_IMAGE
 	imshow("Processed Signal", preProcImage);
+#endif //IMSHOW_DEBUG_IMAGE
 	
 	//左上信息块
 	grayscale = 0;

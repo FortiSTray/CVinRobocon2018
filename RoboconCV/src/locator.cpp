@@ -1,4 +1,5 @@
 #include "locator.h"
+#include "modeConfig.h"
 
 Locator::Locator(void)
 {
@@ -20,7 +21,9 @@ Signal Locator::locate(Mat &img)
 	cvtColor(srcImage, preProcImage, COLOR_BGR2GRAY);
 	adaptiveThreshold(preProcImage, preProcImage, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 25, 0);
 
+#ifdef IMSHOW_DEBUG_IMAGE
 	imshow("After Process", preProcImage);
+#endif //IMSHOW_DEBUG_IMAGE
 
 	dstSignal.image = Mat(REGULAR_SIGNAL_HEIGHT, REGULAR_SIGNAL_WIDTH, CV_8UC3, Scalar(0, 0, 0));
 	dstSignal.lable = false;
@@ -111,7 +114,9 @@ Signal Locator::locate(Mat &img)
 
 	dstSignal = getSignal(markerPair);
 
+#ifdef IMSHOW_DEBUG_IMAGE
 	imshow("Debug", debugImage);
+#endif //IMSHOW_DEBUG_IMAGE
 
 	return dstSignal;
 }
