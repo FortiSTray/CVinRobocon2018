@@ -64,8 +64,8 @@ int main(int argc, char* argv[])
 #ifndef DISABLE_SERIAL_PORT
 
 	//初始化串口并打开监听线程
-	int serialPortNumber = 1;
-	if (!CrtSerialPort.InitPort(serialPortNumber))
+	int serialPortNumber = 7;
+	if (!CrtSerialPort.InitPort(serialPortNumber, CBR_115200, 'N', 8, 1))
 	{
 		std::cout << "Serial port " << serialPortNumber << " init failed." << std::endl;
 	}
@@ -336,18 +336,18 @@ int main(int argc, char* argv[])
 #endif //IMWRITE_DEBUG_IMAGE
 
 				//输出得到的信息
-				int message = -1;
+				int signalData = -1;
 				if (dstSignal.lable == true)
 				{
-					message = CrtDecoder.decode(dstSignal.image);
+					signalData = CrtDecoder.decode(dstSignal.image);
 				}
 				else {}
-				cout << message << endl;
+				cout << signalData << endl;
 
 #ifndef DISABLE_SERIAL_PORT
 
 				uchar* pData = new uchar;
-				*pData = static_cast<uchar>(message);
+				*pData = static_cast<uchar>(signalData);
 				CrtSerialPort.WriteData(pData, 1);
 				delete pData;
 

@@ -249,6 +249,8 @@ UINT CSerialPort::GetBytesInCOM()
 
 int serialStatus = 0;
 int serialMessage = -1;
+unsigned char* returnValue = (unsigned char*)"OK\r\n";
+
 UINT WINAPI CSerialPort::ListenThread(void* pParam)
 {
 	/** 得到本类的指针 */
@@ -327,14 +329,17 @@ UINT WINAPI CSerialPort::ListenThread(void* pParam)
 						else if ((getTaskStatus() == OPEN_NEAR || getTaskStatus() == OPEN_FAR) && serialMessage == 0)
 						{
 							setTaskStatus(SUSPEND_BOTH);
+							pSerialPort->WriteData(returnValue, 4);
 						}
 						else if ((getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_FAR) && serialMessage == 1)
 						{
 							setTaskStatus(OPEN_NEAR);
+							pSerialPort->WriteData(returnValue, 4);
 						}
 						else if ((getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_NEAR) && serialMessage == 2)
 						{
 							setTaskStatus(OPEN_FAR);
+							pSerialPort->WriteData(returnValue, 4);
 						}
 						else {}
 					}
