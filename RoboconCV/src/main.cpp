@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 
 	//初始化串口并打开监听线程
 	int serialPortNumber = 7;
-	if (!CrtSerialPort.InitPort(serialPortNumber, CBR_115200, 'N', 8, 1))
+	if (!CrtSerialPort.InitPort(serialPortNumber, CBR_256000, 'N', 8, 1))
 	{
 		std::cout << "Serial port " << serialPortNumber << " init failed." << std::endl;
 	}

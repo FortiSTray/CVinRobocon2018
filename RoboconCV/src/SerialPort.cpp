@@ -295,6 +295,7 @@ UINT WINAPI CSerialPort::ListenThread(void* pParam)
 
 				case 2:
 					if (cRecved == '+') { serialStatus = 3; }
+					else if (cRecved == '\r') { serialStatus = 5; }
 					else { serialStatus = 0; }
 					break;
 
@@ -325,20 +326,37 @@ UINT WINAPI CSerialPort::ListenThread(void* pParam)
 				case 5:
 					if (cRecved == '\n')
 					{ 
-						if (getTaskStatus() == INIT_DONE) { setTaskStatus(SUSPEND_BOTH); }
-						else if ((getTaskStatus() == OPEN_NEAR || getTaskStatus() == OPEN_FAR) && serialMessage == 0)
+						//根据信息位判断任务状态的变化以及返回数值
+						if (serialMessage == -1)
 						{
-							setTaskStatus(SUSPEND_BOTH);
+							if (getTaskStatus() == INIT_DONE)
+							{
+								setTaskStatus(SUSPEND_BOTH);
+							}
 							pSerialPort->WriteData(returnValue, 4);
 						}
-						else if ((getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_FAR) && serialMessage == 1)
+						else if (serialMessage == 0)
 						{
-							setTaskStatus(OPEN_NEAR);
+							if (getTaskStatus() == OPEN_NEAR || getTaskStatus() == OPEN_FAR) 
+							{ 
+								setTaskStatus(SUSPEND_BOTH); 
+							}
 							pSerialPort->WriteData(returnValue, 4);
 						}
-						else if ((getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_NEAR) && serialMessage == 2)
+						else if (serialMessage == 1)
 						{
-							setTaskStatus(OPEN_FAR);
+							if (getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_FAR)
+							{
+								setTaskStatus(OPEN_NEAR);
+							}
+							pSerialPort->WriteData(returnValue, 4);
+						}
+						else if (serialMessage == 2)
+						{
+							if (getTaskStatus() == SUSPEND_BOTH || getTaskStatus() == OPEN_NEAR)
+							{
+								setTaskStatus(OPEN_FAR);
+							}
 							pSerialPort->WriteData(returnValue, 4);
 						}
 						else {}
