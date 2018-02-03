@@ -11,7 +11,7 @@
 #define SINGLE_CAMERA_DEBUG
 
 //禁用串口发送数据
-//#define DISABLE_SERIAL_PORT
+#define DISABLE_SERIAL_PORT
 
 //显示调试图像
 #define IMSHOW_DEBUG_IMAGE

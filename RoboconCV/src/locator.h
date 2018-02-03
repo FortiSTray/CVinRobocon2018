@@ -9,8 +9,8 @@ using namespace cv;
 
 #define Pi 3.14159265359f
 
-#define REGULAR_SIGNAL_HEIGHT 21
-#define REGULAR_SIGNAL_WIDTH  75
+#define REGULAR_SIGNAL_HEIGHT 28
+#define REGULAR_SIGNAL_WIDTH  66
 
 #define POSSIBLE_MARKER_NUM 10
 

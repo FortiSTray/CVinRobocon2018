@@ -301,10 +301,10 @@ Signal Locator::getSignal(vector<Marker> markerPair)
 		}
 
 		//透视变换
-		srcCorner[0] = markerLeft.cornerLeftTop;
-		srcCorner[1] = markerLeft.cornerLeftBottom;
-		srcCorner[2] = markerRight.cornerRightTop;
-		srcCorner[3] = markerRight.cornerRightBottom;
+		srcCorner[0] = markerLeft.cornerRightTop;
+		srcCorner[1] = markerLeft.cornerRightBottom;
+		srcCorner[2] = markerRight.cornerLeftTop;
+		srcCorner[3] = markerRight.cornerLeftBottom;
 
 		dstCorner[0] = Point(0, 0);
 		dstCorner[1] = Point(0, REGULAR_SIGNAL_HEIGHT);
