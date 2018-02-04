@@ -71,8 +71,10 @@ UINT WINAPI frameGetThread(LPVOID lpParam)
 	{
 		if (CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 		{
+			setFrameBufferLock(true);
 			//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
 			frameGetStatus = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+			setFrameBufferLock(false);
 
 			//分辨率改变了，则刷新背景
 			if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
@@ -138,8 +140,10 @@ UINT WINAPI frameGetThread(LPVOID lpParam)
 			cameraSelect = CAMERA_FAR;
 			if (CameraGetImageBuffer(hCameraGroup->handleFar, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 			{
+				setFrameBufferLock(true);
 				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
 				frameGetStatus = CameraImageProcess(hCameraGroup->handleFar, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+				setFrameBufferLock(false);
 			}
 
 			break;

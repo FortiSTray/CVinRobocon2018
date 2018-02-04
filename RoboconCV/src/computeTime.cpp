@@ -12,16 +12,14 @@ ComputeTime::~ComputeTime()
    
 bool ComputeTime::Begin()  
 {  
-	if (!Initialized)  
-	    return 0;
+	if (!Initialized) { return 0; }
 
 	return QueryPerformanceCounter((LARGE_INTEGER*)&BeginTime);  
  }
      
 double ComputeTime::End()
 {  
-	if(!Initialized)  
-		return 0;
+	if (!Initialized) { return 0; }
     
 	__int64 endtime;  
 	 
