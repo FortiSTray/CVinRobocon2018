@@ -439,7 +439,7 @@ bool CSerialPort::WriteData(unsigned char* pData, unsigned int length)
 	return true;
 }
 
-//状态全局变量get & set
+//任务状态全局变量get & set
 int tmpTaskStatus = INITIALIZE;
 void setTaskStatus(int status)
 {
@@ -448,4 +448,15 @@ void setTaskStatus(int status)
 int getTaskStatus(void)
 {
 	return tmpTaskStatus;
+}
+
+//帧缓冲锁get & set
+bool tmpFrameBufferLock = false;
+void setFrameBufferLock(bool status)
+{
+	tmpFrameBufferLock = status;
+}
+bool getFrameBufferLock(void)
+{
+	return tmpFrameBufferLock;
 }

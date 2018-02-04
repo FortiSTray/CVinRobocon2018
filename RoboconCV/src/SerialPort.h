@@ -169,4 +169,8 @@ private:
 void setTaskStatus(int status);
 int getTaskStatus(void);
 
+//帧缓冲锁get & set
+void setFrameBufferLock(bool status);
+bool getFrameBufferLock(void);
+
 #endif //_SERIAL_PORT_H 

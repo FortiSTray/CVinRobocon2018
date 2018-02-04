@@ -8,7 +8,7 @@
 */
 
 //单摄像头调试模式
-#define SINGLE_CAMERA_DEBUG
+//#define SINGLE_CAMERA_DEBUG
 
 //禁用串口发送数据
 #define DISABLE_SERIAL_PORT

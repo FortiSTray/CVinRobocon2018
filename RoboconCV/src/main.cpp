@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "Windows.h"
+#include "process.h"
 #include "opencv2\opencv.hpp"
 #include "CameraApi.h"
 #include "locator.h"
@@ -21,13 +22,30 @@ using namespace cv;
 #define CAMERA_NEAR 0
 #define CAMERA_FAR  1
 
-BOOL            m_bExit = FALSE;		//用来通知图像抓取线程结束
-CameraHandle    m_hCamera;              //单相机模式时相机句柄
-CameraHandle    m_hCameraNear;		    //近焦相机句柄
-CameraHandle    m_hCameraFar;		    //远焦相机句柄
-BYTE*           m_pFrameBuffer;         //用于将原始图像数据转换为RGB的缓冲区
-tSdkFrameHead   m_sFrInfo;		        //用于保存当前图像帧的帧头信息
-char		    g_CameraName[64];
+//双摄像头句柄组
+typedef struct
+{
+	CameraHandle    handleNear;		    //近焦相机句柄
+	CameraHandle    handleFar;		    //远焦相机句柄
+
+	//重载[]运算符以用序号访问两个句柄
+	CameraHandle operator[](uchar i)
+	{
+		if (i == 0) { return handleNear; }
+		else if (i == 1) { return handleFar; }
+		else { cout << "Camera handle access denied!" << endl; return -1; }
+	}
+}CameraHandleGroup;
+
+UINT				m_threadID;				//图像抓取线程的ID
+HANDLE				m_hFrameGetThread;	    //图像抓取线程的句柄
+BOOL				m_bExit = FALSE;		//用来通知图像抓取线程结束
+CameraHandle		m_hCamera;              //单相机模式时相机句柄
+CameraHandleGroup   m_hCameraGroup;         //双相机比赛模式相机句柄组
+BYTE*			    m_pFrameBuffer;         //用于将原始图像数据转换为RGB的缓冲区
+tSdkFrameHead		m_sFrInfo;		        //用于保存当前图像帧的帧头信息
+CameraSdkStatus     frameGetStatus = CAMERA_STATUS_FAILED;
+tSdkFrameHead		sFrameInfo;
 
 //类的实例化
 Locator CrtLocator;
@@ -42,23 +60,135 @@ int fileSerial = 0;
 
 #endif //IMWRITE_DEBUG_IMAGE
 
+#ifdef SINGLE_CAMERA_DEBUG
+
+UINT WINAPI frameGetThread(LPVOID lpParam)
+{
+	CameraHandle    hCamera = (CameraHandle)lpParam;
+	BYTE*			pbyBuffer;
+
+	while (!m_bExit)
+	{
+		if (CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
+		{
+			//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
+			frameGetStatus = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+
+			//分辨率改变了，则刷新背景
+			if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
+			{
+				m_sFrInfo.iWidth = sFrameInfo.iWidth;
+				m_sFrInfo.iHeight = sFrameInfo.iHeight;
+				//图像大小改变，通知重绘
+			}
+
+			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
+			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
+			CameraReleaseImageBuffer(m_hCamera, pbyBuffer);
+
+			memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
+		}
+	}
+
+	_endthreadex(0);
+	return 0;
+}
+
+#else
+
+UINT WINAPI frameGetThread(LPVOID lpParam)
+{
+	CameraHandleGroup*    hCameraGroup = (CameraHandleGroup*)lpParam;
+	BYTE*			      pbyBuffer;
+	bool				  cameraSelect = CAMERA_NEAR;
+
+	int taskStatus = INIT_DONE;
+	setTaskStatus(INIT_DONE);
+	int timeSleepMs = 0;
+	while (!m_bExit)
+	{
+		taskStatus = getTaskStatus();
+		switch (taskStatus)
+		{
+		case INIT_DONE:
+			timeSleepMs = 50;
+			cout << "Waiting for GayQiao's trigger signal. Sleep for " << timeSleepMs << "ms" << endl;
+			Sleep(timeSleepMs);
+			continue;
+
+		case SUSPEND_BOTH:
+			timeSleepMs = 5;
+			cout << "Suspending. Sleep for " << timeSleepMs << "ms" << endl;
+			Sleep(timeSleepMs);
+			continue;
+
+		case OPEN_NEAR:
+			cameraSelect = CAMERA_NEAR;
+			if (CameraGetImageBuffer(hCameraGroup->handleNear, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
+			{
+				setFrameBufferLock(true);
+				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
+				frameGetStatus = CameraImageProcess(hCameraGroup->handleNear, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+				setFrameBufferLock(false);
+			}
+
+			break;
+
+		case OPEN_FAR:
+			cameraSelect = CAMERA_FAR;
+			if (CameraGetImageBuffer(hCameraGroup->handleFar, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
+			{
+				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
+				frameGetStatus = CameraImageProcess(hCameraGroup->handleFar, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+			}
+
+			break;
+
+		default:
+			continue;
+		}
+
+		//分辨率改变了，则刷新背景
+		if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
+		{
+			m_sFrInfo.iWidth = sFrameInfo.iWidth;
+			m_sFrInfo.iHeight = sFrameInfo.iHeight;
+			//图像大小改变，通知重绘
+		}
+
+		//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
+		//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
+		if (cameraSelect == CAMERA_NEAR)
+		{
+			CameraReleaseImageBuffer(hCameraGroup->handleNear, pbyBuffer);
+		}
+		else
+		{
+			CameraReleaseImageBuffer(hCameraGroup->handleFar, pbyBuffer);
+		}
+
+		memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
+	}
+
+	_endthreadex(0);
+	return 0;
+}
+
+#endif //SINGLE_CAMERA_DEBUG
+
 int main(int argc, char* argv[])
 {
 #ifdef SINGLE_CAMERA_DEBUG
 
 	tSdkCameraDevInfo sCameraList[1];
 	INT iCameraNums;
+	char g_CameraName[64];
 
 #endif //SINGLE_CAMERA_DEBUG
 
-	CameraSdkStatus status;
+	CameraSdkStatus cameraInitStatus;
 	tSdkCameraCapbility sCameraInfo;
 
-	tSdkFrameHead sFrameInfo;
-	BYTE* pbyBuffer;
-
-	bool cameraSelect = CAMERA_NEAR;
-	bool getImageBufferFlag = false;
 	int keyStatus = 0;
 
 #ifndef DISABLE_SERIAL_PORT
@@ -96,12 +226,12 @@ int main(int argc, char* argv[])
 		return FALSE;
 	}
 
-	if ((status = CameraInit(&sCameraList[0], -1, -1, &m_hCamera)) != CAMERA_STATUS_SUCCESS)
+	if ((cameraInitStatus = CameraInit(&sCameraList[0], -1, -1, &m_hCamera)) != CAMERA_STATUS_SUCCESS)
 	{
 		char msg[128];
-		sprintf_s(msg, "Failed to init the camera! Error code is %d\n", status);
+		sprintf_s(msg, "Failed to init the camera! Error code is %d\n", cameraInitStatus);
 		printf(msg);
-		printf(CameraGetErrorString(status));
+		printf(CameraGetErrorString(cameraInitStatus));
 		return FALSE;
 	}
 
@@ -115,7 +245,7 @@ int main(int argc, char* argv[])
 	//获得该相机的特性描述
 	CameraGetCapability(m_hCamera, &sCameraInfo);
 
-	m_pFrameBuffer = (BYTE *)CameraAlignMalloc(sCameraInfo.sResolutionRange.iWidthMax*sCameraInfo.sResolutionRange.iWidthMax * 3, 16);
+	m_pFrameBuffer = (BYTE*)CameraAlignMalloc(sCameraInfo.sResolutionRange.iWidthMax * sCameraInfo.sResolutionRange.iWidthMax * 3, 16);
 
 	if (sCameraInfo.sIspCapacity.bMonoSensor)
 	{
@@ -126,6 +256,9 @@ int main(int argc, char* argv[])
 
 	//通知SDK内部建该相机的属性页面
 	CameraCreateSettingPage(m_hCamera, NULL, g_CameraName, NULL, NULL, 0);
+
+	//开启摄像头数据获取线程
+	m_hFrameGetThread = (HANDLE)_beginthreadex(NULL, 0, &frameGetThread, (PVOID)m_hCamera, 0, &m_threadID);
 
 	//进入工作模式开始采集图像
 	CameraPlay(m_hCamera);
@@ -151,241 +284,132 @@ int main(int argc, char* argv[])
 	}
 	
 	//用相机名初始化近焦和远焦相机，并给两个相机句柄赋值
-	if ((status = CameraInitEx2("CameraNear", &m_hCameraNear)) != CAMERA_STATUS_SUCCESS)
+	if ((cameraInitStatus = CameraInitEx2("CameraNear", &m_hCameraGroup.handleNear)) != CAMERA_STATUS_SUCCESS)
 	{
 		char msg[128];
-		sprintf_s(msg, "Failed to init CameraNear! Error code is %d\n", status);
+		sprintf_s(msg, "Failed to init CameraNear! Error code is %d\n", cameraInitStatus);
 		printf(msg);
-		printf(CameraGetErrorString(status));
+		printf(CameraGetErrorString(cameraInitStatus));
 		return FALSE;
 	}
-	if ((status = CameraInitEx2("CameraFar", &m_hCameraFar)) != CAMERA_STATUS_SUCCESS)
+	if ((cameraInitStatus = CameraInitEx2("CameraFar", &m_hCameraGroup.handleFar)) != CAMERA_STATUS_SUCCESS)
 	{
 		char msg[128];
-		sprintf_s(msg, "Failed to init the CameraFar! Error code is %d\n", status);
+		sprintf_s(msg, "Failed to init the CameraFar! Error code is %d\n", cameraInitStatus);
 		printf(msg);
-		printf(CameraGetErrorString(status));
+		printf(CameraGetErrorString(cameraInitStatus));
 		return FALSE;
 	}
 	
 	//根据安装方式设置源图像镜像操作
-	CameraSetMirror(m_hCameraNear, 0, FALSE);
-	CameraSetMirror(m_hCameraNear, 1, TRUE );
-	CameraSetMirror(m_hCameraFar , 0, TRUE );
-	CameraSetMirror(m_hCameraFar , 1, FALSE);
+	CameraSetMirror(m_hCameraGroup.handleNear, 0, FALSE);
+	CameraSetMirror(m_hCameraGroup.handleNear, 1, TRUE );
+	CameraSetMirror(m_hCameraGroup.handleFar , 0, TRUE );
+	CameraSetMirror(m_hCameraGroup.handleFar , 1, FALSE);
 
 	//设置对比度
-	CameraSetContrast(m_hCameraNear, 100);
-	CameraSetContrast(m_hCameraFar, 100);
+	CameraSetContrast(m_hCameraGroup.handleNear, 100);
+	CameraSetContrast(m_hCameraGroup.handleFar, 100);
 
 	//获得相机的特性描述，两个相机型号及硬件设置完全相同，所以只需要获取一台相机的信息
-	CameraGetCapability(m_hCameraNear, &sCameraInfo);
+	CameraGetCapability(m_hCameraGroup.handleNear, &sCameraInfo);
 
 	m_pFrameBuffer = (BYTE *)CameraAlignMalloc(sCameraInfo.sResolutionRange.iWidthMax*sCameraInfo.sResolutionRange.iWidthMax * 3, 16);
 
 	if (sCameraInfo.sIspCapacity.bMonoSensor)
 	{
-		CameraSetIspOutFormat(m_hCameraNear, CAMERA_MEDIA_TYPE_RGB8);
-		CameraSetIspOutFormat(m_hCameraFar , CAMERA_MEDIA_TYPE_RGB8);
+		CameraSetIspOutFormat(m_hCameraGroup.handleNear, CAMERA_MEDIA_TYPE_RGB8);
+		CameraSetIspOutFormat(m_hCameraGroup.handleFar , CAMERA_MEDIA_TYPE_RGB8);
 	}
 
 	//通知SDK内部建该相机的属性页面
-	CameraCreateSettingPage(m_hCameraNear, NULL, "CameraNear", NULL, NULL, 0);
-	CameraCreateSettingPage(m_hCameraFar , NULL, "CameraFar" , NULL, NULL, 0);
+	CameraCreateSettingPage(m_hCameraGroup.handleNear, NULL, "CameraNear", NULL, NULL, 0);
+	CameraCreateSettingPage(m_hCameraGroup.handleFar , NULL, "CameraFar" , NULL, NULL, 0);
+
+	//开启摄像头数据获取线程
+	m_hFrameGetThread = (HANDLE)_beginthreadex(NULL, 0, &frameGetThread, (PVOID)&m_hCameraGroup, 0, &m_threadID);
 
 	//进入工作模式开始采集图像
-	CameraPlay(m_hCameraNear);
-	CameraPlay(m_hCameraFar );
+	CameraPlay(m_hCameraGroup.handleNear);
+	CameraPlay(m_hCameraGroup.handleFar );
 
 #ifdef IMSHOW_DEBUG_IMAGE
 
 	//TRUE显示相机配置界面。FALSE则隐藏。
-	CameraShowSettingPage(m_hCameraNear, TRUE);
-	CameraShowSettingPage(m_hCameraFar , TRUE);
+	CameraShowSettingPage(m_hCameraGroup.handleNear, TRUE);
+	CameraShowSettingPage(m_hCameraGroup.handleFar , TRUE);
 
 #else
 
 	//TRUE显示相机配置界面。FALSE则隐藏。
-	CameraShowSettingPage(m_hCameraNear, FALSE);
-	CameraShowSettingPage(m_hCameraFar, FALSE);
+	CameraShowSettingPage(m_hCameraGroup.handleNear, FALSE);
+	CameraShowSettingPage(m_hCameraGroup.handleFar, FALSE);
 
 #endif //IMSHOW_DEBUG_IMAGE
 
 #endif //SINGLE_CAMERA_DEBUG
 
 
-	/*
-	==========================================================================================================
-	                                              Main Loop
-	==========================================================================================================
-	*/
-	int taskStatus = INIT_DONE;
-	setTaskStatus(INIT_DONE);
-	int timeSleepMs = 0;
 	while (!m_bExit)
 	{
-#ifdef SINGLE_CAMERA_DEBUG
-
-		if (CameraGetImageBuffer(m_hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
+		if (frameGetStatus == CAMERA_STATUS_SUCCESS)
 		{
-			//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-			status = CameraImageProcess(m_hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+			/*
+			==========================================================================================================
+															Main Task
+			==========================================================================================================
+			*/
 
-			getImageBufferFlag = true;
-		}
-		else
-		{
-			getImageBufferFlag = false;
-		}
-
-#else
-
-		taskStatus = getTaskStatus();
-		switch (taskStatus)
-		{
-		case INIT_DONE:
-			timeSleepMs = 50;
-			getImageBufferFlag = false;
-			cout << "Waiting for GayQiao's trigger signal. Sleep for " << timeSleepMs << "ms" << endl;
-			Sleep(timeSleepMs);
-			break;
-
-		case SUSPEND_BOTH:
-			timeSleepMs = 5;
-			getImageBufferFlag = false;
-			cout << "Suspending. Sleep for " << timeSleepMs << "ms" << endl;
-			Sleep(timeSleepMs);
-			break;
-
-		case OPEN_NEAR:
-			cameraSelect = CAMERA_NEAR;
-			if (CameraGetImageBuffer(m_hCameraNear, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
-			{
-				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-				status = CameraImageProcess(m_hCameraNear, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
-
-				getImageBufferFlag = true;
-			}
-			else
-			{
-				getImageBufferFlag = false;
-			}
-
-			break;
-
-		case OPEN_FAR:
-			cameraSelect = CAMERA_FAR;
-			if (CameraGetImageBuffer(m_hCameraFar, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
-			{
-				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-				status = CameraImageProcess(m_hCameraFar, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
-
-				getImageBufferFlag = true;
-			}
-			else
-			{
-				getImageBufferFlag = false;
-			}
-
-			break;
-
-		default:
-			break;
-		}
-
-#endif //SINGLE_CAMERA_DEBUG
-
-		if (getImageBufferFlag == true)
-		{
-			//分辨率改变了，则刷新背景
-			if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
-			{
-				m_sFrInfo.iWidth = sFrameInfo.iWidth;
-				m_sFrInfo.iHeight = sFrameInfo.iHeight;
-				//图像大小改变，通知重绘
-			}
-
-			if (status == CAMERA_STATUS_SUCCESS)
-			{
-				/*
-				==========================================================================================================
-																Main Task
-				==========================================================================================================
-				*/
-
-				Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
+			while (getFrameBufferLock() == true);
+			Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
 #ifdef IMSHOW_DEBUG_IMAGE
-				imshow("Original", srcImage);
+			imshow("Original", srcImage);
 #endif //IMSHOW_DEBUG_IMAGE
 
-				Signal dstSignal;
-				dstSignal = CrtLocator.locate(srcImage);
+			Signal dstSignal;
+			dstSignal = CrtLocator.locate(srcImage);
 #ifdef IMSHOW_DEBUG_IMAGE
-				imshow("Signal", dstSignal.image);
+			imshow("Signal", dstSignal.image);
 #endif //IMSHOW_DEBUG_IMAGE
 
 #ifdef IMWRITE_DEBUG_IMAGE
 
-				if (waitKey(1) == ' ')
-				{
-					sprintf(fileName, "./data/data%d.jpg", fileSerial++);
-					if (fileSerial >= 99) { fileSerial--; }
-					imwrite(fileName, dstSignal.image);
-				}
+			if (waitKey(1) == ' ')
+			{
+				sprintf(fileName, "./data/data%d.jpg", fileSerial++);
+				if (fileSerial >= 99) { fileSerial--; }
+				imwrite(fileName, dstSignal.image);
+			}
 
 #endif //IMWRITE_DEBUG_IMAGE
 
-				//输出得到的信息
-				int signalData = -1;
-				if (dstSignal.lable == true)
-				{
-					signalData = CrtDecoder.decode(dstSignal.image);
-				}
-				else {}
-				cout << signalData << endl;
+			//输出得到的信息
+			int signalData = -1;
+			if (dstSignal.lable == true)
+			{
+				signalData = CrtDecoder.decode(dstSignal.image);
+			}
+			else {}
+			cout << signalData << endl;
 
 #ifndef DISABLE_SERIAL_PORT
 
-				uchar* pData = new uchar;
-				*pData = static_cast<uchar>(signalData);
-				CrtSerialPort.WriteData(pData, 1);
-				delete pData;
+			uchar* pData = new uchar;
+			*pData = static_cast<uchar>(signalData);
+			CrtSerialPort.WriteData(pData, 1);
+			delete pData;
 
 #endif //DISABLE_SERIAL_PORT
 
-				//输出帧率
-				cout << FPSOutput.End() << endl;
-				FPSOutput.Begin();
+			//输出帧率
+			cout << FPSOutput.End() << endl;
+			FPSOutput.Begin();
 
-				/*
-				==========================================================================================================
-														      End Main Task
-				==========================================================================================================
-				*/
-			}
-
-#ifdef SINGLE_CAMERA_DEBUG
-
-			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
-			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
-			CameraReleaseImageBuffer(m_hCamera, pbyBuffer);
-
-#else
-
-			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
-			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
-			if (cameraSelect == CAMERA_NEAR)
-			{
-				CameraReleaseImageBuffer(m_hCameraNear, pbyBuffer);
-			}
-			else
-			{
-				CameraReleaseImageBuffer(m_hCameraFar, pbyBuffer);
-			}
-
-#endif //SINGLE_CAMERA_DEBUG
-
-			memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
+			/*
+			==========================================================================================================
+														    End Main Task
+			==========================================================================================================
+			*/
 		}
 
 		//延时及检测按键事件
@@ -396,11 +420,7 @@ int main(int argc, char* argv[])
 			break;
 		}
 	}
-	/*
-	==========================================================================================================
-	                                            End Main Loop
-	==========================================================================================================
-	*/
+
 
 #ifdef SINGLE_CAMERA_DEBUG
 
@@ -408,8 +428,8 @@ int main(int argc, char* argv[])
 
 #else
 
-	CameraUnInit(m_hCameraNear);
-	CameraUnInit(m_hCameraFar );
+	CameraUnInit(m_hCameraGroup.handleNear);
+	CameraUnInit(m_hCameraGroup.handleFar );
 
 #endif //SINGLE_CAMERA_DEBUG
 
