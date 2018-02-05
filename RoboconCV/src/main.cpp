@@ -45,7 +45,6 @@ CameraHandleGroup   m_hCameraGroup;         //双相机比赛模式相机句柄�
 BYTE*			    m_pFrameBuffer;         //用于将原始图像数据转换为RGB的缓冲区
 tSdkFrameHead		m_sFrInfo;		        //用于保存当前图像帧的帧头信息
 CameraSdkStatus     frameGetStatus = CAMERA_STATUS_FAILED;
-tSdkFrameHead		sFrameInfo;
 
 //类的实例化
 Locator CrtLocator;
@@ -66,29 +65,25 @@ UINT WINAPI frameGetThread(LPVOID lpParam)
 {
 	CameraHandle    hCamera = (CameraHandle)lpParam;
 	BYTE*			pbyBuffer;
+	tSdkFrameHead	sFrameInfo;
 
 	while (!m_bExit)
 	{
 		if (CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 		{
 			setFrameBufferLock(true);
-			//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-			frameGetStatus = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
-			setFrameBufferLock(false);
-
-			//分辨率改变了，则刷新背景
-			if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
 			{
-				m_sFrInfo.iWidth = sFrameInfo.iWidth;
-				m_sFrInfo.iHeight = sFrameInfo.iHeight;
-				//图像大小改变，通知重绘
+				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
+				frameGetStatus = CameraImageProcess(hCamera, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+
+				//复制帧头信息
+				memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
 			}
+			setFrameBufferLock(false);
 
 			//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
 			//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
 			CameraReleaseImageBuffer(m_hCamera, pbyBuffer);
-
-			memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
 		}
 	}
 
@@ -102,7 +97,7 @@ UINT WINAPI frameGetThread(LPVOID lpParam)
 {
 	CameraHandleGroup*    hCameraGroup = (CameraHandleGroup*)lpParam;
 	BYTE*			      pbyBuffer;
-	bool				  cameraSelect = CAMERA_NEAR;
+	tSdkFrameHead		  sFrameInfo;
 
 	int taskStatus = INIT_DONE;
 	setTaskStatus(INIT_DONE);
@@ -116,62 +111,57 @@ UINT WINAPI frameGetThread(LPVOID lpParam)
 			timeSleepMs = 50;
 			cout << "Waiting for GayQiao's trigger signal. Sleep for " << timeSleepMs << "ms" << endl;
 			Sleep(timeSleepMs);
-			continue;
+			break;
 
 		case SUSPEND_BOTH:
 			timeSleepMs = 5;
 			cout << "Suspending. Sleep for " << timeSleepMs << "ms" << endl;
 			Sleep(timeSleepMs);
-			continue;
+			break;
 
 		case OPEN_NEAR:
-			cameraSelect = CAMERA_NEAR;
 			if (CameraGetImageBuffer(hCameraGroup->handleNear, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 			{
 				setFrameBufferLock(true);
-				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-				frameGetStatus = CameraImageProcess(hCameraGroup->handleNear, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+				{
+					//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
+					frameGetStatus = CameraImageProcess(hCameraGroup->handleNear, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+
+					//复制帧头信息
+					memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
+				}
 				setFrameBufferLock(false);
+
+				//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
+				//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
+				CameraReleaseImageBuffer(hCameraGroup->handleNear, pbyBuffer);
 			}
 
 			break;
 
 		case OPEN_FAR:
-			cameraSelect = CAMERA_FAR;
 			if (CameraGetImageBuffer(hCameraGroup->handleFar, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
 			{
 				setFrameBufferLock(true);
-				//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
-				frameGetStatus = CameraImageProcess(hCameraGroup->handleFar, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+				{
+					//将获得的原始数据转换成RGB格式的数据，同时经过ISP模块，对图像进行降噪，边沿提升，颜色校正等处理。
+					frameGetStatus = CameraImageProcess(hCameraGroup->handleFar, pbyBuffer, m_pFrameBuffer, &sFrameInfo);
+
+					//复制帧头信息
+					memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
+				}
 				setFrameBufferLock(false);
+
+				//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
+				//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
+				CameraReleaseImageBuffer(hCameraGroup->handleFar, pbyBuffer);
 			}
 
 			break;
 
 		default:
-			continue;
+			break;
 		}
-
-		//分辨率改变了，则刷新背景
-		if (m_sFrInfo.iWidth != sFrameInfo.iWidth || m_sFrInfo.iHeight != sFrameInfo.iHeight)
-		{
-			m_sFrInfo.iWidth = sFrameInfo.iWidth;
-			m_sFrInfo.iHeight = sFrameInfo.iHeight;
-			//图像大小改变，通知重绘
-		}
-
-		//在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
-		//否则再次调用CameraGetImageBuffer时，程序将被挂起，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
-		if (cameraSelect == CAMERA_NEAR)
-		{
-			CameraReleaseImageBuffer(hCameraGroup->handleNear, pbyBuffer);
-		}
-		else
-		{
-			CameraReleaseImageBuffer(hCameraGroup->handleFar, pbyBuffer);
-		}
-
-		memcpy(&m_sFrInfo, &sFrameInfo, sizeof(tSdkFrameHead));
 	}
 
 	_endthreadex(0);
@@ -365,7 +355,7 @@ int main(int argc, char* argv[])
 			*/
 
 			while (getFrameBufferLock() == true);
-			Mat srcImage(Size(sFrameInfo.iWidth, sFrameInfo.iHeight), CV_8UC3, m_pFrameBuffer);
+			Mat srcImage(Size(m_sFrInfo.iWidth, m_sFrInfo.iHeight), CV_8UC3, m_pFrameBuffer);
 #ifdef IMSHOW_DEBUG_IMAGE
 			imshow("Original", srcImage);
 #endif //IMSHOW_DEBUG_IMAGE
